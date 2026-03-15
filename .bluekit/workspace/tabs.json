@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "bluekit.tabs.v2",
+  "updatedAt": "2026-03-15T01:14:21.270Z",
+  "activeContext": "project:a5bf5a24-6f58-43a8-96b6-080676507c07",
+  "contexts": {
+    "project:a5bf5a24-6f58-43a8-96b6-080676507c07": {
+      "activeTabId": "tab_ba8cd5a4",
+      "tabs": [
+        {
+          "id": "tab_ba8cd5a4",
+          "type": "project",
+          "title": "Tasks",
+          "icon": "list",
+          "resource": {
+            "projectId": "a5bf5a24-6f58-43a8-96b6-080676507c07",
+            "view": "tasks"
+          },
+          "view": {},
+          "pinned": false,
+          "dirty": false,
+          "closable": true,
+          "openedAt": "2026-03-14T22:55:14.490Z"
+        }
+      ]
+    }
+  }
+}
