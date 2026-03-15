@@ -23,7 +23,7 @@ export function Hero() {
               lineHeight="0.94"
               textAlign="left"
             >
-              Sharpen your execution.
+              Control your context.
             </Text>
 
             <Text
