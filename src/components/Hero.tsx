@@ -35,7 +35,7 @@ export function Hero() {
               textAlign="left"
               maxW="980px"
             >
-              The local-first notebook for planning, reusable patterns, and high-context coding.
+              The local-first notebook for planning, understanding, and high-context coding.
             </Text>
           </VStack>
 
