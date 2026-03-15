@@ -31,7 +31,7 @@ export function Nav() {
             gap="10px"
             _hover={{ textDecoration: 'none' }}
           >
-            <Image src={catLogo} alt="BlueKit logo" boxSize="28px" />
+            <Image src={catLogo} alt="BlueKit logo" boxSize="42px" />
             <Text fontSize="33px" fontWeight="700" letterSpacing="-0.018em" lineHeight={1}>
               <Text as="span" color="primary.500">
                 blue
