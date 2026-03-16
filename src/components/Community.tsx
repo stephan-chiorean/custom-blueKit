@@ -12,7 +12,7 @@ export function Community() {
           style={{ backdropFilter: 'blur(20px) saturate(180%)', WebkitBackdropFilter: 'blur(20px) saturate(180%)' }}
         >
           <VStack align="start" gap="12px">
-            <Text fontSize="11.5px" fontWeight="700" letterSpacing="0.13em" textTransform="uppercase" color="primary.500" fontFamily="mono">
+            <Text fontSize="20px" fontWeight="700" letterSpacing="0.13em" textTransform="uppercase" color="primary.500" fontFamily="mono">
               Community
             </Text>
             <Text as="h2" color="white" fontSize={{ base: '30px', md: '40px' }} letterSpacing="-0.02em" lineHeight="1.08">

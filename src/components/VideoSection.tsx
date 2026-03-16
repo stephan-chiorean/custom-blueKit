@@ -21,7 +21,7 @@ export function VideoSection() {
       <Container maxW="1280px" px={{ base: '16px', md: '28px', lg: '36px' }}>
         <VStack align="start" gap="12px" mb={{ base: '24px', md: '30px' }}>
           <Text
-            fontSize="11.5px"
+            fontSize="20px"
             fontWeight="700"
             letterSpacing="0.13em"
             textTransform="uppercase"

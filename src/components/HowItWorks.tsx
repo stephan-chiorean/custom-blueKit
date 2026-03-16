@@ -30,7 +30,7 @@ const steps: Step[] = [
     number: '02',
     title: 'Build your context',
     description:
-      'Create plans with milestones, track tasks, group reusable code blocks, and bookmark critical files.',
+      'Create plans to track tasks, group reusable context blocks, and bookmark critical resources.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <rect x="5" y="3.5" width="14" height="17" rx="2" stroke="currentColor" strokeWidth="1.7" />
@@ -71,7 +71,7 @@ const steps: Step[] = [
     title: 'Knowledge travels with your code',
     description: (
       <>
-        Block folders live inside{' '}
+        Your notebook lives inside{' '}
         <Text
           as="code"
           fontFamily="mono"
@@ -84,18 +84,13 @@ const steps: Step[] = [
         >
           .bluekit/
         </Text>{' '}
-        so your reusable patterns move with the repo.
+        so your context moves with your repo.
       </>
     ),
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path
-          d="M6 6v4a4 4 0 0 0 4 4h8M18 6h-4M18 6v4M10 14H6m0 0v4m0-4h4"
-          stroke="currentColor"
-          strokeWidth="1.7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     ),
   },
@@ -132,7 +127,7 @@ export function HowItWorks() {
       <Container maxW="1160px" px={{ base: '20px', md: '32px' }}>
         <VStack gap="12px" maxW="2xl" mx="auto" textAlign="center" mb={{ base: '56px', md: '64px' }}>
           <Text
-            fontSize="12px"
+            fontSize="20px"
             fontWeight="700"
             letterSpacing="0.13em"
             textTransform="uppercase"
@@ -180,6 +175,8 @@ export function HowItWorks() {
                     gridColumn={{ base: '1 / -1', md: isEven ? '1 / 2' : '3 / 4' }}
                     justifySelf={{ base: 'stretch', md: isEven ? 'end' : 'start' }}
                     textAlign={{ base: 'left', md: isEven ? 'right' : 'left' }}
+                    pr={{ base: '0', md: isEven ? '28px' : '0' }}
+                    pl={{ base: '0', md: isEven ? '0' : '28px' }}
                     maxW="384px"
                   >
                     <Text
@@ -189,7 +186,7 @@ export function HowItWorks() {
                       lineHeight="1"
                       letterSpacing="-0.03em"
                       color="primary.500"
-                      opacity={0.2}
+                      opacity={0.5}
                       mb="8px"
                     >
                       {step.number}
