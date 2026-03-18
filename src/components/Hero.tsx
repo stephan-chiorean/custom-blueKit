@@ -1,4 +1,4 @@
-import { Box, Container, HStack, Image, Link, Text, VStack } from '@chakra-ui/react';
+import { Box, Container, HStack, Link, Text, VStack } from '@chakra-ui/react';
 
 function AppleIcon() {
   return (
@@ -89,6 +89,8 @@ export function Hero() {
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
             }}
+            maxW={{ base: '100%', md: '80%' }}
+            mx="auto"
             borderRadius={{ base: '18px', md: '24px' }}
             overflow="hidden"
             border="1px solid rgba(255, 255, 255, 0.09)"
@@ -96,12 +98,13 @@ export function Hero() {
             boxShadow="0 30px 90px rgba(0,0,0,0.45)"
             position="relative"
           >
-            <Image
-              src="/app-panel.png"
-              alt="BlueKit app interface"
-              w="100%"
-              h="auto"
-              display="block"
+            <video
+              src="/Bluekit-app.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              style={{ width: '100%', height: 'auto', display: 'block' }}
             />
             <Box
               position="absolute"
