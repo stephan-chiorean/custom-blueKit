@@ -13,10 +13,7 @@ export function Footer() {
       gap="8px"
     >
       <Text color="text.tertiary" fontSize="13px" textAlign="center">
-        © 2026 BlueKit · Built for developers who think locally.
-      </Text>
-      <Text color="rgba(255,255,255,0.45)" fontSize="12px" textAlign="center">
-        Local-first by design.
+        © 2026 BlueKit · Built for humans.
       </Text>
     </VStack>
   );
