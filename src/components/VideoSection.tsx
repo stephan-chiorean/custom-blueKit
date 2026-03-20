@@ -41,6 +41,7 @@ const features: {
     bg: 'rgba(168, 85, 247, 0.08)',
     border: 'rgba(168, 85, 247, 0.15)',
     hoverBorder: 'rgba(168, 85, 247, 0.4)',
+    demoVideo: '/CreateBlock.mp4',
   },
   {
     title: 'Bookmarks',
