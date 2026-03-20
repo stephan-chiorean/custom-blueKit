@@ -133,7 +133,7 @@ export function VideoSection() {
               <Text color="white" fontSize="20px" fontWeight="600" mb="8px" letterSpacing="-0.015em">
                 {feature.title}
               </Text>
-              <Text color="text.secondary" fontSize="15px" lineHeight="1.72" flex="1">
+              <Text color="rgba(255,255,255,0.58)" fontSize="15px" lineHeight="1.72" flex="1">
                 {feature.body}
               </Text>
 
