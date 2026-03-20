@@ -11,7 +11,7 @@ const features: {
   bg: string;
   border: string;
   hoverBorder: string;
-  hasDemo?: boolean;
+  demoVideo?: string;
 }[] = [
   {
     title: 'Tasks',
@@ -21,7 +21,7 @@ const features: {
     bg: 'rgba(96, 165, 250, 0.08)',
     border: 'rgba(96, 165, 250, 0.15)',
     hoverBorder: 'rgba(96, 165, 250, 0.4)',
-    hasDemo: true,
+    demoVideo: '/CreateTask.mp4',
   },
   {
     title: 'Plans',
@@ -31,6 +31,7 @@ const features: {
     bg: 'rgba(34, 197, 94, 0.08)',
     border: 'rgba(34, 197, 94, 0.15)',
     hoverBorder: 'rgba(34, 197, 94, 0.4)',
+    demoVideo: '/CreatePlan.mp4',
   },
   {
     title: 'Blocks',
@@ -53,25 +54,25 @@ const features: {
 ];
 
 export function VideoSection() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [activeDemo, setActiveDemo] = useState<{ title: string; color: string; icon: IconType; video: string } | null>(null);
 
   // Lock body scroll when modal is open
   useEffect(() => {
-    if (modalOpen) {
+    if (activeDemo) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [modalOpen]);
+  }, [activeDemo]);
 
   // Close on Escape
   useEffect(() => {
-    if (!modalOpen) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setModalOpen(false); };
+    if (!activeDemo) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setActiveDemo(null); };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [modalOpen]);
+  }, [activeDemo]);
 
   return (
     <Box as="section" id="features" pt={{ base: '44px', md: '78px' }} pb={{ base: '72px', md: '108px' }}>
@@ -103,16 +104,16 @@ export function VideoSection() {
               borderRadius="16px"
               p={{ base: '20px', md: '24px' }}
               transition="border-color 0.2s, transform 0.2s, box-shadow 0.2s"
-              _hover={feature.hasDemo ? {
+              _hover={feature.demoVideo ? {
                 borderColor: feature.hoverBorder,
                 transform: 'translateY(-2px)',
                 cursor: 'pointer',
-                boxShadow: `0 8px 32px rgba(96, 165, 250, 0.12)`,
+                boxShadow: `0 8px 32px color-mix(in srgb, ${feature.color} 12%, transparent)`,
               } : {
                 borderColor: feature.hoverBorder,
                 transform: 'translateY(-2px)',
               }}
-              onClick={feature.hasDemo ? () => setModalOpen(true) : undefined}
+              onClick={feature.demoVideo ? () => setActiveDemo({ title: feature.title, color: feature.color, icon: feature.icon, video: feature.demoVideo! }) : undefined}
               display="flex"
               flexDirection="column"
             >
@@ -136,7 +137,7 @@ export function VideoSection() {
                 {feature.body}
               </Text>
 
-              {feature.hasDemo && (
+              {feature.demoVideo && (
                 <Box
                   mt="20px"
                   display="inline-flex"
@@ -169,7 +170,7 @@ export function VideoSection() {
         </Grid>
       </Container>
 
-      {modalOpen && (
+      {activeDemo && (
         <Box
           className="modal-backdrop"
           position="fixed"
@@ -179,7 +180,7 @@ export function VideoSection() {
           alignItems="center"
           justifyContent="center"
           px={{ base: '16px', md: '40px' }}
-          onClick={() => setModalOpen(false)}
+          onClick={() => setActiveDemo(null)}
           style={{
             background: 'radial-gradient(ellipse at 50% 40%, rgba(66, 135, 245, 0.07) 0%, rgba(5, 13, 31, 0.88) 60%)',
             backdropFilter: 'blur(12px)',
@@ -206,17 +207,17 @@ export function VideoSection() {
                   w="28px"
                   h="28px"
                   borderRadius="8px"
-                  bg="rgba(96, 165, 250, 0.14)"
-                  border="1px solid rgba(96, 165, 250, 0.25)"
+                  bg={`color-mix(in srgb, ${activeDemo.color} 14%, transparent)`}
+                  border={`1px solid color-mix(in srgb, ${activeDemo.color} 25%, transparent)`}
                   display="flex"
                   alignItems="center"
                   justifyContent="center"
-                  color="#60a5fa"
+                  color={activeDemo.color}
                 >
-                  <LuListTodo size={14} />
+                  <activeDemo.icon size={14} />
                 </Box>
                 <Text color="rgba(255,255,255,0.55)" fontSize="13px" fontWeight="500" letterSpacing="0.02em">
-                  Tasks · <Text as="span" color="rgba(255,255,255,0.85)">Demo</Text>
+                  {activeDemo.title} · <Text as="span" color="rgba(255,255,255,0.85)">Demo</Text>
                 </Text>
               </Box>
 
@@ -233,7 +234,7 @@ export function VideoSection() {
                 border="1px solid rgba(255,255,255,0.08)"
                 transition="all 0.15s"
                 _hover={{ color: 'white', bg: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.15)' }}
-                onClick={() => setModalOpen(false)}
+                onClick={() => setActiveDemo(null)}
                 style={{ cursor: 'pointer' } as React.CSSProperties}
               >
                 <LuX size={15} />
@@ -246,12 +247,13 @@ export function VideoSection() {
               overflow="hidden"
               position="relative"
               style={{
-                border: '1px solid rgba(96, 165, 250, 0.2)',
-                boxShadow: '0 0 0 1px rgba(96, 165, 250, 0.06), 0 32px 80px rgba(0, 0, 0, 0.55), 0 0 60px rgba(96, 165, 250, 0.08)',
+                border: `1px solid color-mix(in srgb, ${activeDemo.color} 20%, transparent)`,
+                boxShadow: `0 0 0 1px color-mix(in srgb, ${activeDemo.color} 6%, transparent), 0 32px 80px rgba(0, 0, 0, 0.55), 0 0 60px color-mix(in srgb, ${activeDemo.color} 8%, transparent)`,
               } as React.CSSProperties}
             >
               <video
-                src="/CreateTask.mp4"
+                key={activeDemo.video}
+                src={activeDemo.video}
                 autoPlay
                 muted
                 loop
