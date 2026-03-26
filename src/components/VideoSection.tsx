@@ -51,6 +51,7 @@ const features: {
     bg: 'rgba(251, 146, 60, 0.08)',
     border: 'rgba(251, 146, 60, 0.15)',
     hoverBorder: 'rgba(251, 146, 60, 0.4)',
+    demoVideo: '/CreateBookmark.mp4',
   },
 ];
 
