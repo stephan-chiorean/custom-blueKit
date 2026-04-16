@@ -47,7 +47,7 @@ export function Hero() {
             flexWrap="wrap"
           >
             <Link
-              href="https://pub-bbfe77b031cf40df8b49f3dcd9f96d78.r2.dev/BlueKit_0.2.3_aarch64.dmg"
+              href="https://pub-bbfe77b031cf40df8b49f3dcd9f96d78.r2.dev/BlueKit_0.3.0_aarch64.dmg"
               display="inline-flex"
               alignItems="center"
               justifyContent="center"
