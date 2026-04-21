@@ -1,4 +1,5 @@
 import { Box, Container, HStack, Link, Text, VStack } from "@chakra-ui/react";
+import { Logo } from "./Logo";
 
 function AppleIcon() {
   return (
@@ -24,80 +25,127 @@ export function Hero() {
     >
       <Container maxW="1280px" px={{ base: "16px", md: "28px", lg: "36px" }}>
         <VStack align="stretch" gap={{ base: "26px", md: "34px" }}>
-          <VStack
-            align="start"
-            gap="0"
-            maxW="760px"
-            className="hero-reveal"
-            style={{ animationDelay: "0.06s" }}
-          >
-            <Text
-              as="h1"
-              color="white"
-              fontWeight="700"
-              fontSize={{ base: "56px", md: "78px", lg: "96px" }}
-              letterSpacing="-0.032em"
-              lineHeight="0.94"
-              textAlign="left"
-            >
-              Control your context.
-            </Text>
 
-            <Text
-              mt={{ base: "18px", md: "22px" }}
-              color="rgba(255,255,255,0.74)"
-              fontSize={{ base: "24px", md: "36px" }}
-              lineHeight={{ base: "1.25", md: "1.18" }}
-              letterSpacing="-0.015em"
-              textAlign="left"
-              maxW="860px"
-            >
-              The individual workspace for precise engineering and
-              understanding.
-            </Text>
-          </VStack>
-
+          {/* Two-column: text left, logo right */}
           <HStack
-            className="hero-reveal"
-            style={{ animationDelay: "0.18s" }}
-            gap={{ base: "12px", md: "18px" }}
             align="center"
-            flexWrap="wrap"
+            justify="space-between"
+            gap={{ base: "32px", lg: "48px" }}
+            flexDirection={{ base: "column", lg: "row" }}
           >
-            <Link
-              href="https://pub-bbfe77b031cf40df8b49f3dcd9f96d78.r2.dev/bluekit-app_0.3.2_aarch64.dmg"
-              display="inline-flex"
+            <VStack
+              align="start"
+              gap="0"
+              flex="1"
+              minW="0"
+              className="hero-reveal"
+              style={{ animationDelay: "0.06s" }}
+            >
+              <Text
+                as="h1"
+                color="white"
+                fontWeight="700"
+                fontSize={{ base: "56px", md: "78px", lg: "96px" }}
+                letterSpacing="-0.032em"
+                lineHeight="0.94"
+                textAlign="left"
+              >
+                Control your context.
+              </Text>
+
+              <Text
+                mt={{ base: "18px", md: "22px" }}
+                color="rgba(255,255,255,0.74)"
+                fontSize={{ base: "24px", md: "36px" }}
+                lineHeight={{ base: "1.25", md: "1.18" }}
+                letterSpacing="-0.015em"
+                textAlign="left"
+                maxW="600px"
+              >
+                The individual workspace for precise engineering and
+                understanding.
+              </Text>
+
+              <Text
+                mt={{ base: "12px", md: "14px" }}
+                color="rgba(255,255,255,0.58)"
+                fontSize={{ base: "15px", md: "17px" }}
+                letterSpacing="0.01em"
+                textAlign="left"
+              >
+                A markdown notebook with{" "}
+                <Text
+                  as="span"
+                  fontWeight="700"
+                  color="#4287f5"
+                >
+                  superpowers
+                </Text>
+                .
+              </Text>
+
+              <HStack
+                mt={{ base: "28px", md: "36px" }}
+                className="hero-reveal"
+                style={{ animationDelay: "0.18s" }}
+                gap={{ base: "12px", md: "18px" }}
+                align="center"
+                flexWrap="wrap"
+              >
+                <Link
+                  href="https://pub-bbfe77b031cf40df8b49f3dcd9f96d78.r2.dev/bluekit-app_0.3.2_aarch64.dmg"
+                  display="inline-flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  gap="10px"
+                  bg="primary.500"
+                  color="white"
+                  borderRadius="12px"
+                  px={{ base: "18px", md: "26px" }}
+                  py={{ base: "12px", md: "14px" }}
+                  fontSize={{ base: "15px", md: "16px" }}
+                  fontWeight="600"
+                  transition="background 0.2s, transform 0.2s, box-shadow 0.2s"
+                  _hover={{
+                    bg: "primary.600",
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 14px 36px rgba(66, 135, 245, 0.35)",
+                    textDecoration: "none",
+                  }}
+                >
+                  <AppleIcon />
+                  <Text>Download for macOS</Text>
+                </Link>
+
+                <Link
+                  href="#how"
+                  color="primary.300"
+                  fontSize={{ base: "16px", md: "17px" }}
+                  fontWeight="600"
+                  _hover={{ color: "white", textDecoration: "none" }}
+                >
+                  See how it works
+                </Link>
+              </HStack>
+            </VStack>
+
+            {/* Logo on the right */}
+            <Box
+              flexShrink={0}
+              className="hero-reveal"
+              style={{ animationDelay: "0.12s" }}
+              display={{ base: "none", lg: "flex" }}
               alignItems="center"
               justifyContent="center"
-              gap="10px"
-              bg="primary.500"
-              color="white"
-              borderRadius="12px"
-              px={{ base: "18px", md: "26px" }}
-              py={{ base: "12px", md: "14px" }}
-              fontSize={{ base: "15px", md: "16px" }}
-              fontWeight="600"
-              transition="background 0.2s, transform 0.2s, box-shadow 0.2s"
-              _hover={{
-                bg: "primary.600",
-                transform: "translateY(-2px)",
-                boxShadow: "0 14px 36px rgba(66, 135, 245, 0.35)",
-                textDecoration: "none",
-              }}
             >
-              <AppleIcon />
-              <Text>Download for macOS</Text>
-            </Link>
-
-            <Link
-              href="#how"
-              color="primary.300"
-              fontSize={{ base: "16px", md: "17px" }}
-              fontWeight="600"
-              _hover={{ color: "white", textDecoration: "none" }}
-            >
-              See how it works
-            </Link>
+              <Logo
+                size={500}
+                style={{
+                  filter: "drop-shadow(0 0 60px rgba(66, 135, 245, 0.25))",
+                  opacity: 0.9,
+                }}
+              />
+            </Box>
           </HStack>
 
           <Box
