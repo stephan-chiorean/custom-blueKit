@@ -132,6 +132,51 @@ export function Hero() {
               background="linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 24%, rgba(0,0,0,0.22) 100%)"
             />
           </Box>
+
+          <Box
+            className="hero-reveal"
+            style={{ animationDelay: "0.32s" }}
+            display="flex"
+            flexWrap="wrap"
+            justifyContent="center"
+            gap={{ base: "8px", md: "10px" }}
+          >
+            {[
+              "Map your intentions",
+              "Trace your understanding",
+              "Built-in tooling",
+              "No plugin hell",
+            ].map((item) => (
+              <Box
+                key={item}
+                display="inline-flex"
+                alignItems="center"
+                gap="8px"
+                px={{ base: "14px", md: "16px" }}
+                py={{ base: "7px", md: "8px" }}
+                borderRadius="full"
+                border="1px solid rgba(66, 135, 245, 0.2)"
+                bg="rgba(66, 135, 245, 0.06)"
+              >
+                <Box
+                  w="5px"
+                  h="5px"
+                  borderRadius="full"
+                  bg="primary.400"
+                  flexShrink={0}
+                  style={{ boxShadow: "0 0 6px rgba(66, 135, 245, 0.8)" }}
+                />
+                <Text
+                  color="rgba(255,255,255,0.65)"
+                  fontSize={{ base: "13px", md: "14px" }}
+                  fontWeight="500"
+                  letterSpacing="0.01em"
+                >
+                  {item}
+                </Text>
+              </Box>
+            ))}
+          </Box>
         </VStack>
       </Container>
     </Box>
