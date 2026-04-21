@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
 import { Box, Container, Grid, Text, VStack } from '@chakra-ui/react';
-import { LuListTodo, LuMap, LuPackage, LuBookmark, LuX, LuPlay } from 'react-icons/lu';
+import { BsClipboard2CheckFill, BsMapFill, BsBoxFill, BsBookmarkFill } from 'react-icons/bs';
 import type { IconType } from 'react-icons';
 
 const features: {
@@ -11,71 +10,46 @@ const features: {
   bg: string;
   border: string;
   hoverBorder: string;
-  demoVideo?: string;
 }[] = [
   {
     title: 'Tasks',
     body: 'Track everything you need to do, scoped to the project you\'re in. No separate tool, no context switch.',
-    icon: LuListTodo,
+    icon: BsClipboard2CheckFill,
     color: '#60a5fa',
     bg: 'rgba(96, 165, 250, 0.08)',
     border: 'rgba(96, 165, 250, 0.15)',
     hoverBorder: 'rgba(96, 165, 250, 0.4)',
-    demoVideo: '/CreateTask.mp4',
   },
   {
     title: 'Maps',
     body: 'Build interactive panels that map your thoughts, questions, and objectives across groups of context notes.',
-    icon: LuMap,
+    icon: BsMapFill,
     color: '#CD853F',
     bg: 'rgba(205, 133, 63, 0.08)',
     border: 'rgba(205, 133, 63, 0.15)',
     hoverBorder: 'rgba(205, 133, 63, 0.4)',
-    demoVideo: '/CreateMap.mp4',
   },
   {
     title: 'Blocks',
     body: 'Capture reusable context containers and pull them into any project instantly.',
-    icon: LuPackage,
+    icon: BsBoxFill,
     color: '#c084fc',
     bg: 'rgba(168, 85, 247, 0.08)',
     border: 'rgba(168, 85, 247, 0.15)',
     hoverBorder: 'rgba(168, 85, 247, 0.4)',
-    demoVideo: '/CreateBlock.mp4',
   },
   {
     title: 'Markers',
     body: 'Flag notes and resources with lightweight markers so the files that matter are always visible at a glance.',
-    icon: LuBookmark,
+    icon: BsBookmarkFill,
     color: '#FA745A',
     bg: 'rgba(250, 116, 90, 0.08)',
     border: 'rgba(250, 116, 90, 0.15)',
     hoverBorder: 'rgba(250, 116, 90, 0.4)',
-    demoVideo: '/CreateMarker.mp4',
   },
 ];
 
 export function VideoSection() {
-  const [activeDemo, setActiveDemo] = useState<{ title: string; color: string; icon: IconType; video: string } | null>(null);
-
-  // Lock body scroll when modal is open
-  useEffect(() => {
-    if (activeDemo) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
-  }, [activeDemo]);
-
-  // Close on Escape
-  useEffect(() => {
-    if (!activeDemo) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') setActiveDemo(null); };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [activeDemo]);
-
   return (
     <Box as="section" id="features" pt={{ base: '44px', md: '78px' }} pb={{ base: '72px', md: '108px' }}>
       <Container maxW="1280px" px={{ base: '16px', md: '28px', lg: '36px' }}>
@@ -106,16 +80,11 @@ export function VideoSection() {
               borderRadius="16px"
               p={{ base: '20px', md: '24px' }}
               transition="border-color 0.2s, transform 0.2s, box-shadow 0.2s"
-              _hover={feature.demoVideo ? {
+              _hover={{
                 borderColor: feature.hoverBorder,
                 transform: 'translateY(-2px)',
-                cursor: 'pointer',
                 boxShadow: `0 8px 32px color-mix(in srgb, ${feature.color} 12%, transparent)`,
-              } : {
-                borderColor: feature.hoverBorder,
-                transform: 'translateY(-2px)',
               }}
-              onClick={feature.demoVideo ? () => setActiveDemo({ title: feature.title, color: feature.color, icon: feature.icon, video: feature.demoVideo! }) : undefined}
               display="flex"
               flexDirection="column"
             >
@@ -138,154 +107,10 @@ export function VideoSection() {
               <Text color="rgba(255,255,255,0.58)" fontSize="15px" lineHeight="1.72" flex="1">
                 {feature.body}
               </Text>
-
-              {feature.demoVideo && (
-                <Box
-                  mt="20px"
-                  display="inline-flex"
-                  alignItems="center"
-                  gap="7px"
-                  color={feature.color}
-                  fontSize="13px"
-                  fontWeight="600"
-                  letterSpacing="0.01em"
-                >
-                  <Box
-                    className="demo-play-btn"
-                    w="22px"
-                    h="22px"
-                    borderRadius="50%"
-                    bg={`color-mix(in srgb, ${feature.color} 18%, transparent)`}
-                    border={`1px solid color-mix(in srgb, ${feature.color} 35%, transparent)`}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                    flexShrink={0}
-                  >
-                    <LuPlay size={10} style={{ marginLeft: '1px' }} />
-                  </Box>
-                  Watch demo
-                </Box>
-              )}
             </Box>
           ))}
         </Grid>
       </Container>
-
-      {activeDemo && (
-        <Box
-          className="modal-backdrop"
-          position="fixed"
-          inset={0}
-          zIndex={1000}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          px={{ base: '16px', md: '40px' }}
-          onClick={() => setActiveDemo(null)}
-          style={{
-            background: 'radial-gradient(ellipse at 50% 40%, rgba(66, 135, 245, 0.07) 0%, rgba(5, 13, 31, 0.88) 60%)',
-            backdropFilter: 'blur(12px)',
-            WebkitBackdropFilter: 'blur(12px)',
-          } as React.CSSProperties}
-        >
-          <Box
-            className="modal-panel"
-            position="relative"
-            maxW="860px"
-            w="100%"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header bar */}
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              mb="14px"
-              px="2px"
-            >
-              <Box display="flex" alignItems="center" gap="10px">
-                <Box
-                  w="28px"
-                  h="28px"
-                  borderRadius="8px"
-                  bg={`color-mix(in srgb, ${activeDemo.color} 14%, transparent)`}
-                  border={`1px solid color-mix(in srgb, ${activeDemo.color} 25%, transparent)`}
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  color={activeDemo.color}
-                >
-                  <activeDemo.icon size={14} />
-                </Box>
-                <Text color="rgba(255,255,255,0.55)" fontSize="13px" fontWeight="500" letterSpacing="0.02em">
-                  {activeDemo.title} · <Text as="span" color="rgba(255,255,255,0.85)">Demo</Text>
-                </Text>
-              </Box>
-
-              <Box
-                as="button"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                w="30px"
-                h="30px"
-                borderRadius="8px"
-                color="rgba(255,255,255,0.5)"
-                bg="rgba(255,255,255,0.05)"
-                border="1px solid rgba(255,255,255,0.08)"
-                transition="all 0.15s"
-                _hover={{ color: 'white', bg: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.15)' }}
-                onClick={() => setActiveDemo(null)}
-                style={{ cursor: 'pointer' } as React.CSSProperties}
-              >
-                <LuX size={15} />
-              </Box>
-            </Box>
-
-            {/* Video container */}
-            <Box
-              borderRadius="18px"
-              overflow="hidden"
-              position="relative"
-              style={{
-                border: `1px solid color-mix(in srgb, ${activeDemo.color} 20%, transparent)`,
-                boxShadow: `0 0 0 1px color-mix(in srgb, ${activeDemo.color} 6%, transparent), 0 32px 80px rgba(0, 0, 0, 0.55), 0 0 60px color-mix(in srgb, ${activeDemo.color} 8%, transparent)`,
-              } as React.CSSProperties}
-            >
-              <video
-                key={activeDemo.video}
-                src={activeDemo.video}
-                autoPlay
-                muted
-                loop
-                playsInline
-                style={{ width: '100%', height: 'auto', display: 'block' }}
-              />
-              {/* Subtle top/bottom gradient overlay */}
-              <Box
-                position="absolute"
-                inset={0}
-                pointerEvents="none"
-                style={{
-                  background: 'linear-gradient(180deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.18) 100%)',
-                } as React.CSSProperties}
-              />
-            </Box>
-
-            {/* Footer hint */}
-            <Text
-              textAlign="center"
-              mt="12px"
-              color="rgba(255,255,255,0.25)"
-              fontSize="12px"
-              letterSpacing="0.02em"
-            >
-              Press <Text as="kbd" fontFamily="mono" fontSize="11px" color="rgba(255,255,255,0.35)" px="5px" py="1px" borderRadius="4px" bg="rgba(255,255,255,0.07)" border="1px solid rgba(255,255,255,0.1)">Esc</Text> or click outside to close
-            </Text>
-          </Box>
-        </Box>
-      )}
     </Box>
   );
 }

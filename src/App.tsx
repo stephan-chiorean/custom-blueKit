@@ -1,5 +1,4 @@
 import { Box } from '@chakra-ui/react';
-import { Community } from './components/Community';
 import { Download } from './components/Download';
 import { Footer } from './components/Footer';
 import { Hero } from './components/Hero';
@@ -22,7 +21,6 @@ export default function App() {
         <Hero />
         <VideoSection />
         <HowItWorks />
-        <Community />
         <Download />
       </Box>
 

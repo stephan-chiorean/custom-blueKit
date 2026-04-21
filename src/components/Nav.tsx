@@ -4,7 +4,6 @@ import catLogo from '../assets/cat.svg';
 const links = [
   { label: 'Features', href: '#features' },
   { label: 'How it works', href: '#how' },
-  { label: 'Community', href: '#community' },
 ];
 
 export function Nav() {
