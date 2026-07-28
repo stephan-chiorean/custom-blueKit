@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>The Room Is The Boundary — Context as the Unit of Authorization</title>
+<title>The Room Is The Boundary — Context as the Unit of Work</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
@@ -21,6 +21,7 @@
   --green:#63D9A0;
   --red:#FF6B5E;
   --blue:#6FA8DC;
+  --violet:#B79CE8;
   --mono:'IBM Plex Mono',ui-monospace,monospace;
   --sans:'IBM Plex Sans',sans-serif;
   --serif:'Instrument Serif',Georgia,serif;
@@ -28,15 +29,9 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
-  background:var(--ink);
-  color:var(--fg);
-  font-family:var(--sans);
-  font-size:16px;
-  line-height:1.6;
-  -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
+  background:var(--ink);color:var(--fg);font-family:var(--sans);
+  font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
-/* ---------- atmosphere ---------- */
 body::before{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   background-image:
@@ -52,21 +47,17 @@ body::after{
 }
 .wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 28px}
 
-/* ---------- shared type ---------- */
-.eyebrow{
-  font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--fg-faint);display:flex;align-items:center;gap:12px;
-}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--fg-faint);display:flex;align-items:center;gap:12px}
 .eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
-h2{font-family:var(--sans);font-weight:600;font-size:clamp(26px,3.4vw,40px);letter-spacing:-.02em;line-height:1.15}
-h3{font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-dim)}
+h2{font-weight:600;font-size:clamp(26px,3.4vw,40px);letter-spacing:-.02em;line-height:1.15}
+section{padding:110px 0;position:relative}
+section + section{border-top:1px solid var(--line)}
 p{color:var(--fg-dim);max-width:62ch}
 p strong{color:var(--fg);font-weight:600}
 em.s{font-family:var(--serif);font-style:italic;color:var(--amber);font-size:1.12em}
-section{padding:110px 0;position:relative}
-section + section{border-top:1px solid var(--line)}
+.lede{margin-top:14px}
 
-/* ---------- header / hero ---------- */
 header{padding:56px 0 0}
 .brandbar{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;
   font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint)}
@@ -75,43 +66,31 @@ header{padding:56px 0 0}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(99,217,160,.5)}70%{box-shadow:0 0 0 9px rgba(99,217,160,0)}100%{box-shadow:0 0 0 0 rgba(99,217,160,0)}}
 
 .hero{padding:74px 0 96px;display:grid;grid-template-columns:1.35fr .85fr;gap:64px;align-items:end}
-.hero h1{
-  font-family:var(--serif);font-weight:400;
-  font-size:clamp(48px,8.2vw,110px);line-height:.94;letter-spacing:-.025em;color:#F4F7FA;
-}
+.hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(48px,8.2vw,110px);
+  line-height:.94;letter-spacing:-.025em;color:#F4F7FA}
 .hero h1 .alt{font-style:italic;color:var(--amber)}
 .hero .sub{margin-top:30px;font-size:18px;line-height:1.65;max-width:52ch}
 .hero-side{border-left:1px solid var(--line);padding-left:26px}
 .hero-side dl{display:grid;gap:18px;font-family:var(--mono);font-size:12px}
 .hero-side dt{color:var(--fg-faint);letter-spacing:.16em;text-transform:uppercase;font-size:10px}
 .hero-side dd{color:var(--fg);margin-top:4px}
-
 .reveal{opacity:0;transform:translateY(14px);animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}
 @keyframes rise{to{opacity:1;transform:none}}
 
-/* ---------- comparison ---------- */
+/* comparison */
 .compare{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:44px}
-.card{
-  border:1px solid var(--line);background:linear-gradient(180deg,var(--panel) 0%,#0B0F13 100%);
-  padding:28px;position:relative;
-}
+.card{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel) 0%,#0B0F13 100%);padding:28px;position:relative}
 .card.old{border-top:2px solid var(--red)}
 .card.new{border-top:2px solid var(--green)}
-.card .tag{
-  position:absolute;top:-1px;right:-1px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;
-  text-transform:uppercase;padding:5px 10px;color:var(--ink);font-weight:600;
-}
+.card .tag{position:absolute;top:-1px;right:-1px;font-family:var(--mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;padding:5px 10px;color:var(--ink);font-weight:600}
 .card.old .tag{background:var(--red)}
 .card.new .tag{background:var(--green)}
-.card h4{font-family:var(--sans);font-size:20px;font-weight:600;letter-spacing:-.01em;margin:8px 0 6px}
+.card h4{font-size:20px;font-weight:600;letter-spacing:-.01em;margin:8px 0 6px}
 .card .note{font-size:13.5px;color:var(--fg-faint);margin-bottom:22px}
-
 .checklist{list-style:none;font-family:var(--mono);font-size:13px;display:grid;gap:9px}
-.checklist li{
-  display:flex;justify-content:space-between;align-items:center;gap:14px;
-  padding:11px 13px;border:1px solid var(--line);background:#0B0F13;color:var(--fg-dim);
-  animation:flicker 3.2s ease-in-out infinite;
-}
+.checklist li{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:11px 13px;
+  border:1px solid var(--line);background:#0B0F13;color:var(--fg-dim);animation:flicker 3.2s ease-in-out infinite}
 .checklist li:nth-child(2){animation-delay:.25s}
 .checklist li:nth-child(3){animation-delay:.5s}
 .checklist li:nth-child(4){animation-delay:.75s}
@@ -119,43 +98,43 @@ header{padding:56px 0 0}
 @keyframes flicker{0%,100%{border-color:var(--line)}48%{border-color:var(--line-hot)}}
 .checklist .ok{color:var(--red);font-weight:600}
 .tally{margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
-
-/* the gate */
 .gate{border:1px solid var(--line-hot);background:#0B0F13;padding:22px;text-align:center}
 .gate .q{font-family:var(--mono);font-size:13px;color:var(--fg);letter-spacing:.04em}
-.badge-btn{
-  margin-top:16px;width:100%;cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.2em;
+.badge-btn{margin-top:16px;width:100%;cursor:pointer;font-family:var(--mono);font-size:12px;letter-spacing:.2em;
   text-transform:uppercase;padding:14px;border:1px solid var(--green);background:transparent;color:var(--green);
-  transition:background .25s ease,color .25s ease,letter-spacing .25s ease;
-}
+  transition:background .25s ease,color .25s ease,letter-spacing .25s ease}
 .badge-btn:hover{background:var(--green);color:var(--ink);letter-spacing:.28em}
 .badge-btn.admitted{background:var(--green);color:var(--ink);cursor:default}
 .gate .down{font-family:var(--mono);color:var(--fg-faint);margin-top:16px;font-size:16px;line-height:1}
-.inside{
-  margin-top:16px;border:1px dashed var(--line-hot);padding:20px;
-  filter:blur(5px);opacity:.28;transition:filter .7s ease,opacity .7s ease,border-color .7s ease;
-}
+.inside{margin-top:16px;border:1px dashed var(--line-hot);padding:20px;filter:blur(5px);opacity:.28;
+  transition:filter .7s ease,opacity .7s ease,border-color .7s ease}
 .inside.open{filter:none;opacity:1;border-color:var(--green);border-style:solid}
 .inside ul{list-style:none;font-family:var(--mono);font-size:13px;display:grid;gap:8px;color:var(--fg-dim)}
 .inside ul li::before{content:"→ ";color:var(--green)}
 .inside .caption{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin-top:16px}
 
-/* ---------- analogy strip ---------- */
-.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:44px}
+/* two clocks */
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:34px}
+.clocks > div{background:var(--panel);padding:26px}
+.clocks .when{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+.clocks .who{font-size:19px;font-weight:600;margin-top:10px;color:var(--fg)}
+.clocks .freq{font-family:var(--mono);font-size:11px;color:var(--fg-faint);margin-top:4px;letter-spacing:.1em;text-transform:uppercase}
+.clocks p{font-size:14.5px;margin-top:14px}
+.clocks .prompts{margin-top:16px;font-family:var(--mono);font-size:12px;padding:9px 12px;border:1px solid var(--line-hot);display:inline-block}
+.clocks .prompts.zero{color:var(--green);border-color:var(--green)}
+.clocks .prompts.one{color:var(--amber);border-color:var(--amber)}
+
+/* strip */
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:34px}
 .strip div{background:var(--panel);padding:26px}
 .strip .no{font-family:var(--mono);font-size:11px;color:var(--red);letter-spacing:.16em;text-transform:uppercase}
-.strip p{font-size:15px;margin-top:10px;color:var(--fg-dim)}
+.strip p{font-size:15px;margin-top:10px}
 
-/* ---------- badge / policy pass ---------- */
+/* pass */
 .pass-layout{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;margin-top:44px}
-.pass{
-  border:1px solid var(--line-hot);
-  background:
-    radial-gradient(120% 100% at 0% 0%,rgba(240,169,59,.10),transparent 55%),
-    linear-gradient(180deg,#141A20,#0B0F13);
-  padding:0;position:relative;overflow:hidden;
-  box-shadow:0 30px 70px -30px rgba(0,0,0,.9);
-}
+.pass{border:1px solid var(--line-hot);
+  background:radial-gradient(120% 100% at 0% 0%,rgba(240,169,59,.10),transparent 55%),linear-gradient(180deg,#141A20,#0B0F13);
+  position:relative;overflow:hidden;box-shadow:0 30px 70px -30px rgba(0,0,0,.9)}
 .pass::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--amber)}
 .pass-head{padding:22px 26px;border-bottom:1px dashed var(--line-hot);display:flex;justify-content:space-between;align-items:center;gap:16px}
 .pass-head .t{font-family:var(--serif);font-size:30px;letter-spacing:-.01em;color:#F4F7FA}
@@ -171,38 +150,117 @@ header{padding:56px 0 0}
   letter-spacing:.14em;text-transform:uppercase;color:var(--fg-faint);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .timer{color:var(--amber)}
 
-/* ---------- exceptions ---------- */
-.exceptions{display:grid;gap:14px;margin-top:40px}
-.exc{
-  border:1px solid var(--line);border-left:2px solid var(--red);background:var(--panel);
-  padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:20px;
-  transition:transform .25s ease,border-color .25s ease,background .25s ease;
-}
-.exc:hover{transform:translateX(6px);background:var(--panel-2);border-color:var(--line-hot);border-left-color:var(--red)}
-.exc .act{font-family:var(--mono);font-size:15px;color:var(--fg)}
-.exc .verdict{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);white-space:nowrap}
-.exc.ord{border-left-color:var(--green)}
-.exc.ord .verdict{color:var(--green)}
+/* durable timeline */
+.timeline{border:1px solid var(--line);background:var(--panel);padding:32px;margin-top:44px}
+.tl-head{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:baseline;
+  border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}
+.tl-head .name{font-family:var(--serif);font-size:26px;color:#F4F7FA}
+.tl-head .meta{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-faint)}
+.acts{display:grid;gap:0;position:relative;padding-left:26px}
+.acts::before{content:"";position:absolute;left:5px;top:6px;bottom:6px;width:1px;background:var(--line-hot)}
+.act{position:relative;padding:13px 0;display:grid;grid-template-columns:150px 1fr auto;gap:18px;align-items:center;
+  font-family:var(--mono);font-size:12.5px;border-bottom:1px solid rgba(255,255,255,.03)}
+.act::before{content:"";position:absolute;left:-26px;top:50%;transform:translateY(-50%);width:11px;height:11px;
+  border:1px solid var(--fg-faint);background:var(--ink);border-radius:50%}
+.act.now::before{border-color:var(--green);background:var(--green);box-shadow:0 0 0 4px rgba(99,217,160,.15)}
+.act .when{color:var(--fg-faint)}
+.act .what{color:var(--fg)}
+.act .who{color:var(--fg-dim);white-space:nowrap}
+.act .who.bot{color:var(--violet)}
+.tl-foot{margin-top:24px;padding-top:20px;border-top:1px solid var(--line);display:flex;gap:30px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-faint)}
+.tl-foot b{color:var(--green);font-weight:500}
 
-/* ---------- inversion ---------- */
+.states{display:flex;flex-wrap:wrap;gap:9px;margin-top:36px}
+.states span{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid var(--line-hot);padding:8px 13px;color:var(--fg-dim);transition:all .25s ease;cursor:default}
+.states span:hover{border-color:var(--fg-dim);color:var(--fg)}
+.states span.danger{border-color:rgba(255,107,94,.5);color:var(--red)}
+.states span.good{border-color:rgba(99,217,160,.45);color:var(--green)}
+
+/* taint */
+.taint-wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:32px;margin-top:44px;align-items:start}
+.ledger{border:1px solid var(--line);background:#0B0F13;font-family:var(--mono);font-size:12.5px}
+.ledger .bar{padding:11px 16px;border-bottom:1px solid var(--line);color:var(--fg-faint);font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;display:flex;justify-content:space-between;gap:10px}
+.ledger .rows{padding:8px 0}
+.led{display:grid;grid-template-columns:74px 62px 1fr auto;gap:12px;padding:10px 16px;align-items:center;
+  color:var(--fg-dim);transition:background .3s ease,color .3s ease}
+.led .op{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-faint)}
+.led .lab{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--green)}
+.led.src{cursor:pointer}
+.led.src:hover{background:rgba(255,255,255,.03)}
+.led.poison .lab{color:var(--red)}
+.led.hit{background:rgba(255,107,94,.09);color:var(--fg)}
+.led.hit .lab{color:var(--red)}
+.taint-btn{width:100%;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  padding:13px;border:1px solid var(--red);background:transparent;color:var(--red);transition:background .25s,color .25s}
+.taint-btn:hover{background:var(--red);color:var(--ink)}
+.taint-btn.done{background:var(--red);color:var(--ink);cursor:default}
+.blast{border:1px solid var(--line);background:var(--panel);padding:24px;margin-top:18px}
+.blast h5{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);font-weight:400}
+.blast .q{font-family:var(--serif);font-size:21px;color:#F4F7FA;margin-top:12px;line-height:1.3}
+.blast ul{list-style:none;margin-top:18px;display:grid;gap:9px;font-family:var(--mono);font-size:12.5px;color:var(--fg-faint)}
+.blast ul li{opacity:.25;transition:opacity .4s ease,color .4s ease}
+.blast ul li.on{opacity:1;color:var(--red)}
+.blast ul li::before{content:"⌁ ";color:var(--red)}
+.blast .verdict{margin-top:20px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--fg-faint);border-top:1px solid var(--line);padding-top:16px}
+.blast .verdict.on{color:var(--red)}
+
+/* nesting */
+.nest{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:44px;align-items:center}
+.nestbox{border:1px solid var(--line-hot);padding:26px;background:var(--panel)}
+.nestbox .lvl{border:1px solid var(--line-hot);padding:18px;font-family:var(--mono);font-size:12px}
+.nestbox .lvl .n{color:var(--fg);letter-spacing:.06em}
+.nestbox .lvl .c{color:var(--fg-faint);font-size:11px;margin-top:6px}
+.nestbox .child{margin-top:14px;margin-left:26px;border-color:var(--line)}
+.nestbox .child .c{color:var(--green)}
+.nestbox .arrows{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;margin-top:20px;color:var(--fg-faint);gap:14px;flex-wrap:wrap}
+.nestbox .arrows .dn{color:var(--green)}
+.nestbox .arrows .up{color:var(--red)}
+.rule{font-family:var(--serif);font-size:clamp(22px,2.8vw,32px);line-height:1.32;color:#F4F7FA}
+.rule .g{color:var(--green);font-style:italic}
+.rule .r{color:var(--red);font-style:italic}
+
+/* retract spectrum */
+.spectrum{display:grid;gap:14px;margin-top:40px}
+.exc{border:1px solid var(--line);border-left:2px solid var(--green);background:var(--panel);padding:18px 22px;
+  display:grid;grid-template-columns:1fr auto auto;gap:20px;align-items:center;
+  transition:transform .25s ease,border-color .25s ease,background .25s ease}
+.exc:hover{transform:translateX(6px);background:var(--panel-2)}
+.exc .act2{font-family:var(--mono);font-size:14.5px;color:var(--fg)}
+.exc .cls{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg-faint)}
+.exc .verdict2{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);white-space:nowrap}
+.exc.comp{border-left-color:var(--amber)}
+.exc.comp .verdict2{color:var(--amber)}
+.exc.irr{border-left-color:var(--red)}
+.exc.irr .verdict2{color:var(--red)}
+.defn{margin-top:34px;border-left:2px solid var(--amber);padding-left:20px}
+.defn .lab{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+
+/* inversion */
 .inversion{display:grid;grid-template-columns:1fr auto 1fr;gap:36px;align-items:center;margin-top:48px}
 .flow{border:1px solid var(--line);background:var(--panel);padding:30px}
-.flow .node{
-  font-family:var(--mono);font-size:12.5px;text-align:center;padding:12px;border:1px solid var(--line-hot);
-  color:var(--fg-dim);background:#0B0F13;
-}
+.flow .node{font-family:var(--mono);font-size:12.5px;text-align:center;padding:12px;border:1px solid var(--line-hot);
+  color:var(--fg-dim);background:#0B0F13}
 .flow .node.hi{color:var(--ink);background:var(--amber);border-color:var(--amber);font-weight:600}
-.flow .node.wide{letter-spacing:.06em}
 .flow .arw{text-align:center;color:var(--fg-faint);font-family:var(--mono);padding:7px 0;font-size:13px}
 .flow .many{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .flow .many span{font-family:var(--mono);font-size:10px;text-align:center;padding:7px 2px;border:1px solid var(--line);color:var(--fg-faint)}
 .pivot{font-family:var(--serif);font-style:italic;font-size:22px;color:var(--amber);text-align:center;white-space:nowrap}
 .flow-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:16px}
+.layered{margin-top:34px;border:1px solid var(--line);background:var(--panel);padding:24px;display:grid;gap:10px;font-family:var(--mono);font-size:12.5px}
+.layered .l{display:grid;grid-template-columns:170px 1fr;gap:18px;padding:11px 14px;border:1px solid var(--line);background:#0B0F13}
+.layered .l b{font-weight:500;letter-spacing:.1em;text-transform:uppercase;font-size:10px;color:var(--amber)}
+.layered .l span{color:var(--fg-dim)}
 
-/* ---------- logs ---------- */
+/* logs */
 .logs{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:44px}
 .term{border:1px solid var(--line);background:#0B0F13;font-family:var(--mono);font-size:12.5px}
-.term .bar{padding:10px 16px;border-bottom:1px solid var(--line);color:var(--fg-faint);font-size:10px;letter-spacing:.18em;text-transform:uppercase;display:flex;gap:8px;align-items:center}
+.term .bar{padding:10px 16px;border-bottom:1px solid var(--line);color:var(--fg-faint);font-size:10px;
+  letter-spacing:.18em;text-transform:uppercase;display:flex;gap:8px;align-items:center}
 .term .bar i{width:8px;height:8px;border-radius:50%;background:var(--line-hot);display:inline-block}
 .term .body{padding:18px 16px;display:grid;gap:6px;color:var(--fg-faint)}
 .term.noise .body{max-height:280px;overflow:auto}
@@ -210,29 +268,43 @@ header{padding:56px 0 0}
 .term.signal .body span{color:var(--fg)}
 .term.signal .body span b{color:var(--green);font-weight:500}
 .audience{margin-top:16px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-faint)}
+.pk{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line)}
+.pk > div{background:var(--panel);padding:24px}
+.pk .k{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-faint)}
+.pk .val{font-family:var(--mono);font-size:19px;margin-top:10px}
+.pk .a .val{color:var(--red)}
+.pk .b .val{color:var(--green)}
+.pk p{font-size:14px;margin-top:12px}
 
-/* ---------- thesis ---------- */
-.thesis{background:linear-gradient(180deg,#0B0F13,#08090B);}
-.thesis-inner{border:1px solid var(--line-hot);padding:clamp(34px,5vw,68px);position:relative;background:
-  radial-gradient(90% 120% at 100% 0%,rgba(240,169,59,.07),transparent 60%)}
+/* thesis */
+.thesis{background:linear-gradient(180deg,#0B0F13,#08090B)}
+.thesis-inner{border:1px solid var(--line-hot);padding:clamp(34px,5vw,68px);position:relative;
+  background:radial-gradient(90% 120% at 100% 0%,rgba(240,169,59,.07),transparent 60%)}
 .thesis-inner::before,.thesis-inner::after{content:"";position:absolute;width:14px;height:14px;border:1px solid var(--amber)}
 .thesis-inner::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
 .thesis-inner::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
-.thesis blockquote{font-family:var(--serif);font-size:clamp(24px,3.5vw,40px);line-height:1.28;color:#F4F7FA;max-width:22ch;letter-spacing:-.01em}
+.thesis blockquote{font-family:var(--serif);font-size:clamp(24px,3.5vw,40px);line-height:1.28;color:#F4F7FA;max-width:24ch;letter-spacing:-.01em}
 .thesis blockquote span{font-style:italic;color:var(--amber)}
 .thesis .after{margin-top:28px;max-width:58ch;font-size:15.5px}
 .caution{margin-top:36px;border-left:2px solid var(--amber);padding-left:20px}
 .caution .lab{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber)}
+.impossible{margin-top:44px;display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.impossible div{background:var(--panel);padding:20px 22px;font-family:var(--mono);font-size:13px;color:var(--fg-dim)}
+.impossible div::before{content:"▸ ";color:var(--amber)}
 
 footer{border-top:1px solid var(--line);padding:34px 0 60px;font-family:var(--mono);font-size:11px;
   letter-spacing:.16em;text-transform:uppercase;color:var(--fg-faint);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
 @media (max-width:900px){
-  .hero,.pass-layout,.compare,.logs,.inversion{grid-template-columns:1fr}
+  .hero,.pass-layout,.compare,.logs,.inversion,.taint-wrap,.nest,.clocks,.pk,.impossible{grid-template-columns:1fr}
   .hero-side{border-left:none;border-top:1px solid var(--line);padding:24px 0 0}
   .strip{grid-template-columns:1fr}
-  .inversion{gap:20px}
   .pivot{transform:rotate(90deg);padding:14px 0}
+  .act{grid-template-columns:1fr;gap:5px}
+  .led{grid-template-columns:64px 1fr;gap:8px}
+  .led .lab{grid-column:1/-1}
+  .exc{grid-template-columns:1fr;gap:8px}
+  .layered .l{grid-template-columns:1fr;gap:6px}
   section{padding:76px 0}
 }
 </style>
@@ -242,33 +314,34 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-family:var(--mo
 <div class="wrap">
   <header>
     <div class="brandbar reveal">
-      <div><span class="dot"></span>Context Compiler · Grouping · Security</div>
-      <div>Policy.md — illustrated</div>
+      <div><span class="dot"></span>Context Compiler · Grouping · Security &amp; Lifecycle</div>
+      <div>Working notes — illustrated</div>
     </div>
 
     <div class="hero">
       <div class="reveal" style="animation-delay:.1s">
-        <h1>The room<br>is the <span class="alt">security<br>boundary.</span></h1>
-        <p class="sub">Classic IFC assumes <strong>every action is potentially dangerous</strong>, so every tool call is individually evaluated. This proposal inverts that: the dangerous decision isn't the action — <em class="s">it's entering the setting.</em> Once you're inside, the actions are expected.</p>
+        <h1>The room<br>is the <span class="alt">unit<br>of work.</span></h1>
+        <p class="sub">Classic information-flow control evaluates <strong>every action</strong>, because taint travels through data. That's true, and it isn't the whole picture. The decision that carries the most information isn't the action — <em class="s">it's entering the setting.</em> And the setting shouldn't die when the chat window closes.</p>
       </div>
       <aside class="hero-side reveal" style="animation-delay:.25s">
         <dl>
-          <div><dt>Old unit of authorization</dt><dd>The tool invocation</dd></div>
-          <div><dt>New unit of authorization</dt><dd>The Context</dd></div>
-          <div><dt>Policy engine moves</dt><dd>Per action → per environment</dd></div>
-          <div><dt>Residual checks</dt><dd>High-consequence actions only</dd></div>
+          <div><dt>Old unit</dt><dd>The tool invocation</dd></div>
+          <div><dt>New unit</dt><dd>The Context</dd></div>
+          <div><dt>Policy moves</dt><dd>Per action → per environment</dd></div>
+          <div><dt>Lifetime</dt><dd>Outlives the session</dd></div>
+          <div><dt>Taint</dt><dd>Accrues to the object</dd></div>
         </dl>
       </aside>
     </div>
   </header>
 </div>
 
-<!-- 1. TWO MODELS -->
+<!-- 01 -->
 <section>
   <div class="wrap">
     <div class="eyebrow">01 · Two models of the same room</div>
     <h2 style="margin-top:18px">Check every door, or check the doorway.</h2>
-    <p style="margin-top:14px">Same secure room, same operator, same work. The difference is where the approval sits.</p>
+    <p class="lede">Same secure room, same operator, same work. The difference is where the decision sits — and how often a human has to be in the loop.</p>
 
     <div class="compare">
       <div class="card old">
@@ -282,13 +355,13 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-family:var(--mo
           <li><span>Use computer?</span><span class="ok">✓ check</span></li>
           <li><span>Print document?</span><span class="ok">✓ check</span></li>
         </ul>
-        <div class="tally">5 actions → 5 approvals → 0 added safety</div>
+        <div class="tally">5 actions → 5 interrupts → 0 added safety</div>
       </div>
 
       <div class="card new">
         <div class="tag">Proposed</div>
         <h4>Per-context policy</h4>
-        <div class="note">One admission decision governs the environment.</div>
+        <div class="note">One grant governs the environment.</div>
         <div class="gate">
           <div class="q">Enter Incident Room?</div>
           <button class="badge-btn" id="badge">Badge in</button>
@@ -307,30 +380,51 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-family:var(--mo
       </div>
     </div>
 
+    <h2 style="margin-top:76px;font-size:clamp(22px,2.6vw,30px)">A badge swipe is not an approval.</h2>
+    <p class="lede">This is the part that's easy to get wrong. The badge in that panel looks like a prompt. It isn't — it's a <strong>mode switch</strong>. Nobody reviews your swipe in real time. The authorization happened once, at onboarding, and the swipe is you exercising something you already hold. Two clocks, and they are very far apart:</p>
+
+    <div class="clocks">
+      <div>
+        <div class="when">Grant time</div>
+        <div class="who">An administrator</div>
+        <div class="freq">Once · changes rarely</div>
+        <p>"SOC Engineers may open Incident contexts. Ceiling: Grafana read, FireHydrant write, Slack, Jira."</p>
+        <div class="prompts one">1 human decision, months ago</div>
+      </div>
+      <div>
+        <div class="when">Admission time</div>
+        <div class="who">You, doing your job</div>
+        <div class="freq">Constantly · every piece of work</div>
+        <p>The system classifies the work and opens a context <em>within</em> a ceiling you already hold. It narrows — it can never widen.</p>
+        <div class="prompts zero">0 human decisions</div>
+      </div>
+    </div>
+
+    <p style="margin-top:30px"><strong>You cannot need permission to use less permission.</strong> A derived tool set is always a narrowing of a grant you were already given, so approving it would be meaningless ceremony. A prompt appears in exactly three cases: you've asked for something <em>outside</em> your ceiling, you're crossing into a class you don't hold, or the action itself can't be taken back. If prompts are frequent, the ceiling is wrong — and that's an administrator's problem, not yours.</p>
+
     <div class="strip">
       <div><div class="no">Not required</div><p>Re-authenticating to touch every monitor.</p></div>
       <div><div class="no">Not required</div><p>Requesting permission to open each dashboard.</p></div>
       <div><div class="no">Not required</div><p>Clicking approve on Grafana.</p></div>
     </div>
-    <p style="margin-top:26px">When an employee badges into a SOC, the approval <em class="s">was entering the SOC</em> — they then operate inside an already-approved environment. That's why "Context" is arguably the wrong mental model. It's closer to a <strong>Security Zone</strong>, an <strong>Operational Mode</strong>, or an <strong>Execution Environment</strong>.</p>
   </div>
 </section>
 
-<!-- 2. THE POLICY PASS -->
+<!-- 02 -->
 <section>
   <div class="wrap">
-    <div class="eyebrow">02 · What a policy looks like</div>
+    <div class="eyebrow">02 · What a grant looks like</div>
     <div class="pass-layout">
       <div>
-        <h2>Policy becomes a pass, not a prompt.</h2>
-        <p style="margin-top:16px">Instead of a rule per tool call, the policy describes an environment: who may enter, what lives inside, what data class it operates on, where output may land, and how long it stays open.</p>
-        <p style="margin-top:14px"><strong>Once admitted… you're done.</strong> The remaining work happens inside the envelope that was already approved.</p>
+        <h2>Policy becomes a ceiling, not a prompt.</h2>
+        <p class="lede">Instead of a rule per tool call, the policy describes an environment: who may enter, what lives inside, what data class it operates on, where output may land, and how long authority lasts.</p>
+        <p style="margin-top:14px">The mechanism already exists and runs at planetary scale. This is <strong>AssumeRole with a session policy</strong>: a pre-registered ceiling, a per-instance narrowing, and a TTL. Effective permission is the <em>intersection</em> — which is precisely why a machine can be trusted to assemble the narrowing. The worst case is a context that's too small, never one that's too powerful.</p>
       </div>
 
       <div class="pass">
         <div class="pass-head">
           <div class="t">Incident Context</div>
-          <div class="st">Admitted</div>
+          <div class="st">Active</div>
         </div>
         <div class="pass-body">
           <div class="row"><div class="k">Users</div><div class="v"><span>SOC Engineers</span></div></div>
@@ -339,7 +433,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-family:var(--mo
           <div class="row"><div class="k">Outputs</div><div class="v"><span>Jira</span><span>Confluence</span></div></div>
         </div>
         <div class="pass-foot">
-          <span>Duration · 30 minutes</span>
+          <span>Credentials · ephemeral</span>
           <span class="timer" id="timer">29:59 remaining</span>
         </div>
       </div>
@@ -347,28 +441,134 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-family:var(--mo
   </div>
 </section>
 
-<!-- 3. EXCEPTIONS -->
+<!-- 03 DURABILITY -->
 <section>
   <div class="wrap">
-    <div class="eyebrow">03 · The nuance</div>
-    <h2 style="margin-top:18px">Some actions still get their own gate.</h2>
-    <p style="margin-top:14px">Admission to a Context should not, by itself, authorize an irreversible act. The escape hatch is narrow and deliberate: <strong>high-consequence actions</strong> invoke additional policy.</p>
+    <div class="eyebrow">03 · The part that changes everything</div>
+    <h2 style="margin-top:18px">No unit of real work is the size of a session.</h2>
+    <p class="lede">The chat session is ephemeral, private, and amnesiac — and it maps to nothing. An incident spans three days, four people, and a dozen sessions. A migration spans a quarter. The session is an artifact of how chat interfaces were built, not of how work is shaped.</p>
+    <p style="margin-top:14px">A context that <strong>outlives the session</strong> fixes the mismatch. Sessions become what they actually are: <em class="s">activations</em> of something longer-lived.</p>
 
-    <div class="exceptions">
-      <div class="exc ord"><span class="act">Query Grafana for error rate</span><span class="verdict">Context is sufficient</span></div>
-      <div class="exc ord"><span class="act">Post incident summary to Slack</span><span class="verdict">Context is sufficient</span></div>
-      <div class="exc ord"><span class="act">Open a Jira ticket</span><span class="verdict">Context is sufficient</span></div>
-      <div class="exc"><span class="act">Delete every GitHub repository</span><span class="verdict">Additional policy</span></div>
-      <div class="exc"><span class="act">Transfer $10M</span><span class="verdict">Additional policy</span></div>
-      <div class="exc"><span class="act">Terminate production cluster</span><span class="verdict">Additional policy</span></div>
+    <div class="timeline">
+      <div class="tl-head">
+        <div class="name">SEV2 — checkout latency</div>
+        <div class="meta">ctx_4821 · opened Tue 14:02 · closed Thu 11:20</div>
+      </div>
+      <div class="acts">
+        <div class="act"><span class="when">Tue 14:02–14:41</span><span class="what">triage · dashboards · timeline started</span><span class="who">j.rivera</span></div>
+        <div class="act"><span class="when">Tue 22:10–23:04</span><span class="what">unattended log correlation</span><span class="who bot">agent</span></div>
+        <div class="act"><span class="when">Wed 09:15–10:30</span><span class="what">handoff · root cause identified</span><span class="who">m.chen</span></div>
+        <div class="act now"><span class="when">Thu 11:00–11:20</span><span class="what">postmortem drafted · closing</span><span class="who">j.rivera</span></div>
+      </div>
+      <div class="tl-foot">
+        <span>1 object</span><span>4 activations</span><span>2 people + 1 agent</span><span><b>1 audit record</b></span>
+      </div>
+    </div>
+
+    <p style="margin-top:40px">Once it persists, it can hold <strong>status</strong> — and status is what lets other systems reason about it. Work becomes operable the way a pod, a transaction, or a ticket is operable: schedulable, assignable, queryable, attachable.</p>
+    <div class="states">
+      <span>proposed</span><span class="good">admitted</span><span class="good">active</span><span>suspended</span>
+      <span>blocked</span><span class="danger">tainted</span><span class="danger">quarantined</span>
+      <span>escalated</span><span>closed</span><span>archived</span>
+    </div>
+
+    <p style="margin-top:34px"><strong>Durable context, ephemeral credentials.</strong> A three-day context doesn't mean three-day tokens. Identity, state, taint, and ceiling persist; credentials are re-minted per activation and die with it. A suspended context holds <em>no live authority at all</em> — which makes "reopen" a free re-authorization checkpoint, and makes revocation as simple as marking the object instead of chasing tokens.</p>
+  </div>
+</section>
+
+<!-- 04 TAINT -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">04 · Contamination as a property, not a verdict</div>
+    <h2 style="margin-top:18px">Per-call detection has no memory.</h2>
+    <p class="lede">A stateless classifier sees one payload, decides, and forgets. It cannot know that a poisoned document entered on Tuesday and shaped a pull request on Thursday. The causal link exists in the world and nowhere in the system. A durable context makes contamination an <strong>accruing attribute</strong> — labels only ever go up.</p>
+
+    <div class="taint-wrap">
+      <div>
+        <div class="ledger">
+          <div class="bar"><span>ctx_4821 · provenance ledger</span><span>monotonic</span></div>
+          <div class="rows" id="rows">
+            <div class="led"><span class="when">Tue 14:20</span><span class="op">ingest</span><span>grafana annotation #8812</span><span class="lab">clean</span></div>
+            <div class="led"><span class="when">Tue 14:24</span><span class="op">ingest</span><span>firehydrant timeline</span><span class="lab">clean</span></div>
+            <div class="led src" id="src"><span class="when">Tue 22:31</span><span class="op">ingest</span><span>vendor status page</span><span class="lab">clean</span></div>
+            <div class="led out"><span class="when">Wed 09:40</span><span class="op">emit</span><span>JIRA-4821 comment</span><span class="lab">clean</span></div>
+            <div class="led out"><span class="when">Thu 11:02</span><span class="op">emit</span><span>Confluence postmortem</span><span class="lab">clean</span></div>
+          </div>
+        </div>
+        <button class="taint-btn" id="poison" style="margin-top:18px">Discover the vendor page was poisoned</button>
+      </div>
+
+      <div>
+        <div class="blast">
+          <h5>Retroactive containment</h5>
+          <div class="q">Which contexts ingested this, and what did they produce?</div>
+          <ul id="blast">
+            <li>7 contexts ingested the source</li>
+            <li>3 pull requests carry the label</li>
+            <li>11 Jira comments carry the label</li>
+            <li>2 published documents carry the label</li>
+          </ul>
+          <div class="verdict" id="verdict">Awaiting query…</div>
+        </div>
+        <p style="margin-top:22px;font-size:14.5px">This is the exact shape of a compromised dependency and an SBOM: <em class="s">which builds included it?</em> The context is the SBOM of agentic work. Without a durable object, the honest answer to "what did the poisoned source affect" is <strong>we don't know</strong> — permanently.</p>
+      </div>
+    </div>
+
+    <p style="margin-top:36px">Monotonic labels have a known failure mode: eventually everything is red. Information-flow control already named the release valve — <strong>declassification</strong>, an explicit, privileged, recorded act of lowering a label. Rare enough to mean something, attributable when it happens.</p>
+  </div>
+</section>
+
+<!-- 05 NESTING -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">05 · Composition</div>
+    <h2 style="margin-top:18px">Two directions, both enforced by construction.</h2>
+    <p class="lede">Contexts nest. A feature spawns a test run; an incident spawns a rollback; any of them can spawn a sub-agent. The rule falls straight out of the intersection semantics — nobody has to remember to write a check.</p>
+
+    <div class="nest">
+      <div class="nestbox">
+        <div class="lvl"><div class="n">Incident ctx_4821</div><div class="c">ceiling C · taint T</div></div>
+        <div class="lvl child"><div class="n">└ Rollback ctx_4822 (sub-agent)</div><div class="c">ceiling ⊆ C · taint ⊇ T</div></div>
+        <div class="arrows">
+          <span class="dn">↓ capabilities intersect downward</span>
+          <span class="up">↑ taint propagates upward</span>
+        </div>
+      </div>
+      <div>
+        <div class="rule">Delegation <span class="g">cannot escalate</span>.<br>Contamination <span class="r">cannot hide</span>.</div>
+        <p style="margin-top:22px">A child can never exceed its parent's ceiling, so handing work to a sub-agent is safe by construction rather than by review. But contamination found in a child dirties the parent, because the parent consumed its output. Together, these make multi-agent delegation tractable instead of terrifying.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- 4. INVERSION -->
+<!-- 06 RETRACTABILITY -->
 <section>
   <div class="wrap">
-    <div class="eyebrow">04 · The inversion</div>
+    <div class="eyebrow">06 · The exceptions, defined properly</div>
+    <h2 style="margin-top:18px">High-consequence has an actual definition.</h2>
+    <p class="lede">A hand-maintained list of scary verbs doesn't scale and can't be audited. Treat the context as a long-running transaction, and the rule derives itself:</p>
+    <div class="defn">
+      <div class="lab">Rule</div>
+      <p style="margin-top:8px;color:var(--fg);font-size:17px">An action is <strong>high-consequence</strong> when it escapes the context's ability to retract it.</p>
+    </div>
+
+    <div class="spectrum">
+      <div class="exc"><span class="act2">Draft PR · unpublished doc · queued ticket</span><span class="cls">fully staged</span><span class="verdict2">Retract cleanly</span></div>
+      <div class="exc"><span class="act2">Query Grafana · post to incident channel</span><span class="cls">no side effect</span><span class="verdict2">Context is sufficient</span></div>
+      <div class="exc comp"><span class="act2">Provision a resource · open a ticket</span><span class="cls">compensable</span><span class="verdict2">Undo action exists</span></div>
+      <div class="exc irr"><span class="act2">Delete every repository</span><span class="cls">irreversible</span><span class="verdict2">Additional policy</span></div>
+      <div class="exc irr"><span class="act2">Transfer $10M</span><span class="cls">irreversible</span><span class="verdict2">Additional policy</span></div>
+      <div class="exc irr"><span class="act2">Terminate production cluster</span><span class="cls">irreversible</span><span class="verdict2">Additional policy</span></div>
+    </div>
+    <p style="margin-top:30px">This also argues for <strong>staged sinks</strong>: artifacts land in a holding area owned by the context and commit at close. A context found tainted at minute 40 retracts what it hasn't committed, instead of chasing published side effects across four systems.</p>
+  </div>
+</section>
+
+<!-- 07 INVERSION -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">07 · The inversion</div>
     <h2 style="margin-top:18px">Policy moves from per action to per environment.</h2>
 
     <div class="inversion">
@@ -379,7 +579,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-family:var(--mo
           <span>action</span><span>action</span><span>action</span>
         </div>
         <div class="arw">↓ ↓ ↓ ↓ ↓ ↓</div>
-        <div class="node wide">policy check (× every call)</div>
+        <div class="node">policy check (× every call)</div>
         <div class="arw">↓</div>
         <div class="node">allow</div>
       </div>
@@ -388,20 +588,27 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-family:var(--mo
 
       <div class="flow">
         <div class="flow-label">Proposed</div>
-        <div class="node hi">can user enter Context?</div>
-        <div class="arw">↓ yes</div>
-        <div class="node wide">95% of actions execute immediately</div>
+        <div class="node hi">grant: may this principal enter?</div>
+        <div class="arw">↓ once, at grant time</div>
+        <div class="node">ordinary actions execute immediately</div>
         <div class="arw">↓ rare</div>
-        <div class="node" style="border-color:var(--red);color:var(--red)">exceptional action → extra policy</div>
+        <div class="node" style="border-color:var(--red);color:var(--red)">unretractable action → extra policy</div>
       </div>
+    </div>
+
+    <p style="margin-top:44px"><strong>This does not replace information-flow control.</strong> IFC tracks data; contexts track intent. They're orthogonal, and the honest architecture layers them rather than picking a winner:</p>
+    <div class="layered">
+      <div class="l"><b>Context</b><span>intent, ceiling, lifetime, accountability — what work is this?</span></div>
+      <div class="l"><b>Flow labels</b><span>taint on values and sources — what has this touched?</span></div>
+      <div class="l"><b>Gateway</b><span>adversarial enforcement on the wire — hostile users, not just injected models</span></div>
     </div>
   </div>
 </section>
 
-<!-- 5. OBSERVABILITY -->
+<!-- 08 OBSERVABILITY -->
 <section>
   <div class="wrap">
-    <div class="eyebrow">05 · Why the observability story gets stronger</div>
+    <div class="eyebrow">08 · Why the observability story is stronger</div>
     <h2 style="margin-top:18px">Logs that read like work, not like traffic.</h2>
 
     <div class="logs">
@@ -425,84 +632,106 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-family:var(--mo
         <div class="term signal">
           <div class="bar"><i style="background:var(--green)"></i>Per-context audit trail</div>
           <div class="body">
-            <span><b>Context</b> · Incident — SEV2 checkout latency</span>
-            <span><b>Authenticated</b> · j.rivera (SOC Engineers)</span>
-            <span><b>Duration</b> · 27m 41s of 30m</span>
+            <span><b>Context</b> · ctx_4821 — SEV2 checkout latency</span>
+            <span><b>Opened by</b> · j.rivera (SOC Engineers)</span>
+            <span><b>Span</b> · Tue 14:02 → Thu 11:20 · 4 activations</span>
+            <span><b>Participants</b> · j.rivera, m.chen, 1 agent</span>
             <span><b>Tools used</b> · Grafana, FireHydrant, Slack</span>
             <span><b>Artifacts</b> · JIRA-4821, Confluence postmortem</span>
-            <span><b>Exceptions</b> · none escalated</span>
-            <span><b>Outcome</b> · Finished successfully</span>
+            <span><b>Provenance</b> · 14 sources · 0 tainted</span>
+            <span><b>Outcome</b> · Closed successfully</span>
           </div>
         </div>
         <div class="audience">Answers: what happened, and did it go well</div>
       </div>
     </div>
-    <p style="margin-top:26px">That second shape is <em class="s">how managers, admins, and auditors already think.</em></p>
+
+    <div class="pk">
+      <div class="a"><div class="k">If the primary key is</div><div class="val">tool_call_id</div><p>The proxies won. Contexts are a UI convenience layered on traffic.</p></div>
+      <div class="b"><div class="k">If the primary key is</div><div class="val">context_id</div><p>The ontology moved. Everything downstream becomes an implementation detail.</p></div>
+    </div>
   </div>
 </section>
 
-<!-- 6. THESIS -->
+<!-- 09 THESIS -->
 <section class="thesis">
   <div class="wrap">
-    <div class="eyebrow">06 · The claim worth defending</div>
+    <div class="eyebrow">09 · The claim worth defending</div>
     <div class="thesis-inner" style="margin-top:26px">
-      <blockquote>The default authorization unit is the <span>Context</span>, not the individual tool invocation.</blockquote>
-      <p class="after">Context admission establishes the operating environment, and only exceptional or destructive actions require additional approval.</p>
+      <blockquote>The unit of authorization, memory, and audit is the <span>Context</span> — and it outlives the session.</blockquote>
+      <p class="after">Admission establishes the operating environment. Ordinary actions proceed without interruption. Only actions that escape retraction require additional approval. The object persists, accrues provenance, and can be handed off, observed, attached to, and contained after the fact.</p>
       <div class="caution">
         <div class="lab">One caution</div>
-        <p style="margin-top:8px">Don't claim <strong>"no action approvals ever."</strong> The stronger position preserves the seamless workflow while still accommodating organizations that legitimately want an extra checkpoint for irreversible or highly privileged operations.</p>
+        <p style="margin-top:8px">Don't claim <strong>"no approvals ever,"</strong> and don't claim this replaces information-flow control. The defensible position is narrower and stronger: the default unit is the Context, flow labels ride inside it, and the gateway stays underneath for the adversary that assembly can't stop.</p>
       </div>
+    </div>
+
+    <h2 style="margin-top:76px;font-size:clamp(22px,2.6vw,30px)">What becomes possible</h2>
+    <p class="lede">Not <em>easier</em> — possible. Each of these is unanswerable in a per-call, per-session world, because the subject the question is about doesn't exist as a thing.</p>
+    <div class="impossible">
+      <div>Ask what a piece of output was derived from</div>
+      <div>Contain everything a poisoned source touched</div>
+      <div>Hand unfinished work to a person or an overnight agent</div>
+      <div>See every unit of agentic work in flight, with an owner</div>
+      <div>Detect that work has drifted from its stated purpose</div>
+      <div>Revoke by marking an object, not chasing credentials</div>
+      <div>Give a sub-agent exactly the right authority, by construction</div>
+      <div>Report on agentic work in units a manager recognizes</div>
     </div>
   </div>
 </section>
 
 <div class="wrap">
   <footer>
-    <span>Policy.md → illustrated</span>
-    <span>Context = Security Zone / Operational Mode / Execution Environment</span>
+    <span>Working notes → illustrated</span>
+    <span>Context = bounded execution environment · durable · observable</span>
   </footer>
 </div>
 
 <script>
-// staggered reveal on scroll
 const io = new IntersectionObserver((entries)=>{
   entries.forEach((e,i)=>{
     if(e.isIntersecting){
-      e.target.style.animation = `rise .8s cubic-bezier(.2,.7,.2,1) ${i*80}ms forwards`;
+      e.target.style.animation = `rise .8s cubic-bezier(.2,.7,.2,1) ${i*70}ms forwards`;
       io.unobserve(e.target);
     }
   });
-},{threshold:.12});
-document.querySelectorAll('section .card, section .strip > div, .exc, .flow, .term, .pass, .thesis-inner, section h2, section > .wrap > p')
+},{threshold:.1});
+document.querySelectorAll('section .card, section .strip > div, .clocks > div, .exc, .flow, .term, .pass, .thesis-inner, .timeline, .ledger, .blast, .nestbox, .pk > div, .layered, section h2, section > .wrap > p')
   .forEach(el=>{el.style.opacity='0';el.style.transform='translateY(14px)';io.observe(el);});
 
-// badge-in interaction
-const btn = document.getElementById('badge');
-const inside = document.getElementById('inside');
-const cap = document.getElementById('cap');
+// badge-in
+const btn=document.getElementById('badge'), inside=document.getElementById('inside'), cap=document.getElementById('cap');
 btn.addEventListener('click',()=>{
   if(btn.classList.contains('admitted')) return;
   btn.classList.add('admitted');
-  btn.textContent = 'Admitted · Incident Context';
+  btn.textContent='Admitted · Incident Context';
   inside.classList.add('open');
-  const items = inside.querySelectorAll('li');
+  const items=inside.querySelectorAll('li');
   items.forEach((li,i)=>{
-    li.style.opacity = '.25';
-    setTimeout(()=>{li.style.transition='opacity .3s ease,color .3s ease';li.style.opacity='1';li.style.color='var(--fg)';}, 140*i);
+    li.style.opacity='.25';
+    setTimeout(()=>{li.style.transition='opacity .3s ease,color .3s ease';li.style.opacity='1';li.style.color='var(--fg)';},140*i);
   });
-  setTimeout(()=>{cap.textContent = 'No further approvals requested — 5 actions, 1 decision';}, 140*items.length + 250);
+  setTimeout(()=>{cap.textContent='5 actions · 0 interrupts · 1 grant, made months ago';},140*items.length+250);
 });
 
-// duration countdown on the pass
-let t = 30*60 - 1;
-const timer = document.getElementById('timer');
-setInterval(()=>{
-  if(t<=0) return;
-  t--;
-  const m = String(Math.floor(t/60)).padStart(2,'0');
-  const s = String(t%60).padStart(2,'0');
-  timer.textContent = `${m}:${s} remaining`;
+// countdown
+let t=30*60-1; const timer=document.getElementById('timer');
+setInterval(()=>{ if(t<=0)return; t--;
+  timer.textContent=`${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')} remaining`;
 },1000);
+
+// taint propagation
+const poison=document.getElementById('poison'), src=document.getElementById('src');
+const outs=document.querySelectorAll('.led.out'), blast=document.querySelectorAll('#blast li'), verdict=document.getElementById('verdict');
+poison.addEventListener('click',()=>{
+  if(poison.classList.contains('done')) return;
+  poison.classList.add('done'); poison.textContent='Source marked untrusted · label raised';
+  src.classList.add('poison','hit'); src.querySelector('.lab').textContent='untrusted';
+  outs.forEach((o,i)=>setTimeout(()=>{o.classList.add('hit');o.querySelector('.lab').textContent='carries taint';},420+i*380));
+  blast.forEach((b,i)=>setTimeout(()=>b.classList.add('on'),900+i*260));
+  setTimeout(()=>{verdict.classList.add('on');verdict.textContent='Quarantined · owners notified · artifacts frozen';},900+blast.length*260+300);
+});
 </script>
 </body>
 </html>
