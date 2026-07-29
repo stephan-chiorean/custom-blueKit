@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>No ps for Agents — The EDR Analogy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#06070A;
+  --panel:#0C1016;
+  --panel2:#11161E;
+  --line:#1A222C;
+  --line-hot:#28323F;
+  --fg:#DFE6ED;
+  --fg-dim:#8593A2;
+  --fg-faint:#586674;
+  --sig:#4FD1E0;
+  --ok:#5DD39E;
+  --warn:#E8B44F;
+  --bad:#FF5D55;
+  --agent:#B08CE8;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+  --sans:'Archivo',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:26px 26px;
+  mask-image:radial-gradient(ellipse 110% 80% at 50% 0%,#000 15%,transparent 75%)}
+body::after{content:"";position:fixed;inset:0;z-index:998;pointer-events:none;opacity:.22;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 26px}
+
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--fg-faint);
+  display:flex;align-items:center;gap:14px}
+.eyebrow::after{content:"";flex:1;height:1px;background:var(--line)}
+h2{font-weight:700;font-size:clamp(26px,3.6vw,42px);letter-spacing:-.03em;line-height:1.08}
+h3{font-weight:600;font-size:clamp(19px,2.2vw,24px);letter-spacing:-.02em}
+p{color:var(--fg-dim);max-width:64ch}
+p strong{color:var(--fg);font-weight:600}
+.lede{margin-top:15px;font-size:17px}
+section{padding:112px 0}
+section + section{border-top:1px solid var(--line)}
+.hl{color:var(--sig)}
+
+header{padding:52px 0 0}
+.bar{display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--fg-faint)}
+.bar .live{color:var(--sig)}
+.hero{padding:80px 0 40px}
+.hero h1{font-weight:800;font-size:clamp(42px,8vw,104px);line-height:.92;letter-spacing:-.05em;color:#F2F6FA;max-width:15ch}
+.hero h1 em{font-style:normal;color:var(--sig)}
+.hero .sub{margin-top:34px;font-size:19px;max-width:56ch;line-height:1.6}
+.equation{margin-top:56px;display:grid;grid-template-columns:1fr auto 1fr;gap:24px;align-items:center;
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:28px 0}
+.equation .side{font-family:var(--mono);font-size:13px;letter-spacing:.04em}
+.equation .side .k{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-faint);display:block;margin-bottom:8px}
+.equation .side .v{font-size:clamp(16px,2vw,22px);color:var(--fg)}
+.equation .side.b .v{color:var(--sig)}
+.equation .eq{font-family:var(--mono);color:var(--fg-faint);font-size:19px}
+.reveal{opacity:0;transform:translateY(16px);animation:rise .85s cubic-bezier(.2,.7,.2,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* sequence attack */
+.seq{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:38px}
+.seq .step{border:1px solid var(--line);background:var(--panel);padding:20px 18px;position:relative;
+  transition:border-color .4s ease,background .4s ease}
+.seq .step .n{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--fg-faint)}
+.seq .step .t{font-family:var(--mono);font-size:13.5px;margin-top:10px;color:var(--fg)}
+.seq .step .v{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;margin-top:14px;color:var(--ok)}
+.seq.armed .step{border-color:rgba(255,93,85,.45);background:rgba(255,93,85,.05)}
+.seq.armed .step .v{color:var(--bad)}
+.seqbtn{margin-top:20px;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  padding:12px 20px;border:1px solid var(--line-hot);background:transparent;color:var(--fg-dim);cursor:pointer;
+  transition:all .25s ease}
+.seqbtn:hover{border-color:var(--bad);color:var(--bad)}
+.seqcap{margin-top:18px;font-family:var(--mono);font-size:12px;color:var(--fg-faint);min-height:20px}
+.seqcap.on{color:var(--bad)}
+
+/* two panes */
+.panes{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:44px}
+.pane{border:1px solid var(--line);background:linear-gradient(180deg,var(--panel),#080B0F);padding:26px;position:relative}
+.pane .badge{position:absolute;top:-1px;left:-1px;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;
+  text-transform:uppercase;padding:5px 10px;background:var(--line-hot);color:var(--fg-dim)}
+.pane.b .badge{background:var(--sig);color:var(--ink);font-weight:700}
+.pane h4{margin-top:26px;font-size:20px;font-weight:700;letter-spacing:-.02em}
+.pane .q{font-family:var(--mono);font-size:12.5px;color:var(--fg-faint);margin-top:8px}
+.filelist{margin-top:22px;display:grid;gap:7px;font-family:var(--mono);font-size:12.5px}
+.filelist div{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid var(--line);background:#080B0F;color:var(--fg-dim)}
+.filelist div span:last-child{color:var(--ok)}
+.verdict-line{margin-top:20px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--bad)}
+
+/* process tree */
+.tree{font-family:var(--mono);font-size:13px;margin-top:22px}
+.node{position:relative;padding:9px 12px;border:1px solid var(--line);background:#080B0F;color:var(--fg-dim);
+  margin-bottom:7px;display:flex;justify-content:space-between;gap:14px;align-items:center;
+  transition:border-color .35s ease,color .35s ease,background .35s ease,transform .35s ease}
+.node .meta{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-faint)}
+.d1{margin-left:22px}.d2{margin-left:44px}.d3{margin-left:66px}
+.tree .node::before{content:"";position:absolute;left:-14px;top:50%;width:12px;height:1px;background:var(--line-hot)}
+.tree > .node:first-child::before{display:none}
+.node.lit{border-color:var(--sig);color:var(--fg);background:rgba(79,209,224,.07);transform:translateX(3px)}
+.node.hot{border-color:var(--bad);color:#fff;background:rgba(255,93,85,.12)}
+.node.hot .meta{color:var(--bad)}
+.treebtn{margin-top:16px;width:100%;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  padding:13px;border:1px solid var(--sig);background:transparent;color:var(--sig);cursor:pointer;transition:all .25s}
+.treebtn:hover{background:var(--sig);color:var(--ink)}
+.treebtn.done{background:var(--sig);color:var(--ink);cursor:default}
+.result{margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--fg-faint);border-top:1px solid var(--line);
+  padding-top:16px;opacity:0;transition:opacity .5s ease}
+.result.on{opacity:1;color:var(--sig)}
+
+/* orphans */
+.orphan-wrap{margin-top:44px;border:1px solid var(--line);background:var(--panel);padding:34px;position:relative;overflow:hidden}
+.ghost{position:absolute;top:26px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:12px;
+  border:1px dashed var(--line-hot);color:var(--fg-faint);padding:12px 22px;letter-spacing:.14em;text-transform:uppercase}
+.ghost::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:34px;
+  background:repeating-linear-gradient(to bottom,var(--line-hot) 0 4px,transparent 4px 9px)}
+.orphans{margin-top:104px;display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+.orphans span{font-family:var(--mono);font-size:11.5px;padding:9px 13px;border:1px solid var(--line);
+  background:#080B0F;color:var(--fg-faint);animation:drift 6s ease-in-out infinite}
+.orphans span:nth-child(3n){animation-delay:-1.6s}
+.orphans span:nth-child(3n+1){animation-delay:-3.2s}
+@keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.orphan-cap{text-align:center;margin-top:30px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--bad)}
+
+/* mapping */
+.map{margin-top:44px;border:1px solid var(--line)}
+.map .r{display:grid;grid-template-columns:1fr 40px 1fr;border-bottom:1px solid var(--line);align-items:stretch}
+.map .r:last-child{border-bottom:none}
+.map .c{padding:17px 22px;font-family:var(--mono);font-size:13px}
+.map .c.l{background:var(--panel);color:var(--fg-dim)}
+.map .c.r2{background:#080B0F;color:var(--fg)}
+.map .mid{display:flex;align-items:center;justify-content:center;background:var(--panel);color:var(--fg-faint);font-family:var(--mono);font-size:12px}
+.map .head .c{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);padding:14px 22px}
+.map .r.key .c.l{background:rgba(255,93,85,.06);color:var(--fg)}
+.map .r.key .c.r2{background:rgba(79,209,224,.07);color:var(--sig);font-weight:500}
+.map .r.key .mid{background:rgba(255,93,85,.03);color:var(--sig)}
+.keynote{margin-top:24px;border-left:2px solid var(--sig);padding-left:20px}
+
+/* vantage */
+.vantage{margin-top:46px;border:1px solid var(--line);background:var(--panel);padding:0;overflow:hidden}
+.v-zone{padding:30px 30px 34px}
+.v-zone .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-faint)}
+.v-in{background:linear-gradient(180deg,rgba(176,140,232,.07),transparent)}
+.v-items{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.v-items span{font-family:var(--mono);font-size:12px;padding:10px 14px;border:1px solid rgba(176,140,232,.35);
+  color:var(--agent);background:rgba(176,140,232,.05)}
+.wire{border-top:1px dashed var(--line-hot);border-bottom:1px dashed var(--line-hot);background:#080B0F;
+  padding:16px 30px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
+.wire .w{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--warn)}
+.wire .eye{font-family:var(--mono);font-size:11px;color:var(--fg-faint)}
+.v-out .v-items span{border-color:rgba(232,180,79,.35);color:var(--warn);background:rgba(232,180,79,.05)}
+.v-verdict{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.v-verdict > div{background:var(--panel2);padding:22px 26px}
+.v-verdict .k{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint)}
+.v-verdict .val{font-family:var(--mono);font-size:14px;margin-top:9px}
+.v-verdict .a .val{color:var(--warn)}
+.v-verdict .b .val{color:var(--agent)}
+.pull{margin-top:36px;font-size:clamp(20px,2.6vw,30px);font-weight:600;letter-spacing:-.02em;color:#F2F6FA;max-width:26ch;line-height:1.28}
+.pull .r{color:var(--bad)}
+.pull .g{color:var(--sig)}
+
+/* sequencing */
+.rail{margin-top:44px;display:grid;gap:0}
+.rail .stop{display:grid;grid-template-columns:130px 1fr;gap:26px;padding:22px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.rail .stop:last-child{border-bottom:none}
+.rail .yr{font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--fg-faint)}
+.rail .stop.now .yr{color:var(--sig)}
+.rail .ev{font-size:16px;color:var(--fg-dim)}
+.rail .stop.now .ev{color:var(--fg)}
+.rail .ev b{color:var(--fg);font-weight:600}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:38px}
+.two > div{border:1px solid var(--line);padding:24px;background:var(--panel)}
+.two .h{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint)}
+.two .s{font-size:17px;margin-top:12px;color:var(--fg);font-weight:600}
+.two p{font-size:14.5px;margin-top:10px}
+.two .bad{color:var(--bad)}
+.two .good{color:var(--sig)}
+
+/* confidence tiers */
+.tiers{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:40px}
+.tier{border:1px solid var(--line);background:var(--panel);padding:26px;border-top-width:2px}
+.tier.say{border-top-color:var(--sig)}
+.tier.open{border-top-color:var(--warn)}
+.tier .h{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint)}
+.tier.say .h{color:var(--sig)}
+.tier.open .h{color:var(--warn)}
+.tier ul{list-style:none;margin-top:20px;display:grid;gap:11px}
+.tier li{font-size:15px;color:var(--fg);padding-left:20px;position:relative}
+.tier li::before{position:absolute;left:0;font-family:var(--mono);font-size:12px}
+.tier.say li::before{content:"✓";color:var(--sig)}
+.tier.open li::before{content:"?";color:var(--warn)}
+.tier .f{margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);
+  font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--fg-faint)}
+
+/* risk */
+.risk{border:1px solid var(--warn);border-left-width:3px;background:rgba(232,180,79,.04);padding:30px}
+.risk .l{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--warn)}
+.risk h3{margin-top:12px}
+.risk p{margin-top:14px}
+
+/* closing */
+.close{background:linear-gradient(180deg,#080B0F,#06070A)}
+.speech{border:1px solid var(--line-hot);padding:clamp(30px,4.5vw,58px);position:relative;background:
+  radial-gradient(80% 120% at 100% 0%,rgba(79,209,224,.06),transparent 60%)}
+.speech .l{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--sig)}
+.speech p{font-size:clamp(16px,1.9vw,19px);line-height:1.65;color:var(--fg);max-width:70ch;margin-top:22px}
+.speech p + p{margin-top:20px}
+.speech p strong{color:var(--sig);font-weight:600}
+footer{border-top:1px solid var(--line);padding:32px 0 60px;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--fg-faint);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+
+@media (max-width:920px){
+  .panes,.two,.v-verdict,.equation,.tiers{grid-template-columns:1fr}
+  .equation .eq{display:none}
+  .seq{grid-template-columns:1fr 1fr}
+  .map .r{grid-template-columns:1fr}
+  .map .mid{padding:6px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .rail .stop{grid-template-columns:1fr;gap:6px}
+  section{padding:78px 0}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="bar reveal">
+      <div><span class="live">●</span> Context Compiler · Explain</div>
+      <div>The EDR Analogy</div>
+    </div>
+    <div class="hero">
+      <h1 class="reveal" style="animation-delay:.08s">There is no <em>ps</em> for agent work.</h1>
+      <p class="sub reveal" style="animation-delay:.2s">Endpoint security already lived through this exact problem and solved it — by changing what it kept records about. Agent tooling hasn't had that moment yet. This is the argument, borrowed rather than invented.</p>
+      <div class="equation reveal" style="animation-delay:.3s">
+        <div class="side"><span class="k">What exists today</span><span class="v">The gateway is the firewall</span></div>
+        <div class="eq">→</div>
+        <div class="side b"><span class="k">What's missing</span><span class="v">Nobody built the process tree</span></div>
+      </div>
+    </div>
+  </header>
+</div>
+
+<!-- 01 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">01 · The problem antivirus couldn't see</div>
+    <h2 style="margin-top:20px">Every step is fine. The sequence is the attack.</h2>
+    <p class="lede">Antivirus asked one question per file: is this hash on a known-bad list? Stateless, per-event, no memory of anything before it. That worked while malware was a file you downloaded.</p>
+
+    <div class="seq" id="seq">
+      <div class="step"><div class="n">01</div><div class="t">Open a document</div><div class="v">✓ allowed</div></div>
+      <div class="step"><div class="n">02</div><div class="t">Run a script</div><div class="v">✓ allowed</div></div>
+      <div class="step"><div class="n">03</div><div class="t">Schedule a task</div><div class="v">✓ allowed</div></div>
+      <div class="step"><div class="n">04</div><div class="t">Read credentials</div><div class="v">✓ allowed</div></div>
+    </div>
+    <button class="seqbtn" id="seqbtn">View them as one chain</button>
+    <div class="seqcap" id="seqcap">Four unremarkable events. Every checker says yes.</div>
+
+    <p style="margin-top:34px">A per-event checker cannot see a sequence, because <strong>it has no subject that persists long enough to have one.</strong> That is the entire limitation, and it's the same one agent gateways have today.</p>
+  </div>
+</section>
+
+<!-- 02 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">02 · What EDR actually changed</div>
+    <h2 style="margin-top:20px">It didn't block better. It changed the subject.</h2>
+    <p class="lede">Endpoint Detection and Response — CrowdStrike, SentinelOne, Defender — records what happens on a machine continuously: process launches, parent-child relationships, file reads, network connections. The breakthrough wasn't detection quality. It was giving the system <span class="hl">a durable object with lineage</span> to reason about.</p>
+
+    <div class="panes">
+      <div class="pane">
+        <div class="badge">Before · Antivirus</div>
+        <h4>Score each file</h4>
+        <div class="q">subject = a file, lifetime = one check</div>
+        <div class="filelist">
+          <div><span>invoice.docx</span><span>clean</span></div>
+          <div><span>update.ps1</span><span>clean</span></div>
+          <div><span>rundll32.exe</span><span>signed</span></div>
+          <div><span>net.exe</span><span>signed</span></div>
+        </div>
+        <div class="verdict-line">All clean · breach in progress</div>
+      </div>
+
+      <div class="pane b">
+        <div class="badge">After · EDR</div>
+        <h4>Record the process tree</h4>
+        <div class="q">subject = a process, lifetime = its life</div>
+        <div class="tree" id="tree">
+          <div class="node" data-k="root"><span>winword.exe</span><span class="meta">parent</span></div>
+          <div class="node d1" data-k="a"><span>cmd.exe</span><span class="meta">child</span></div>
+          <div class="node d2" data-k="b"><span>powershell.exe</span><span class="meta">child</span></div>
+          <div class="node d3" data-k="hit"><span>rundll32.exe</span><span class="meta">hash abc123</span></div>
+          <div class="node d3" data-k="c"><span>net.exe</span><span class="meta">child</span></div>
+        </div>
+        <button class="treebtn" id="treebtn">Query the fleet for hash abc123</button>
+        <div class="result" id="tres">—</div>
+      </div>
+    </div>
+
+    <p style="margin-top:34px">Two things became possible that were structurally impossible before: <strong>behavioral detection</strong> — a sentence like "this document spawned a shell that contacted a new domain" can only be written if you kept the lineage — and <strong>retroactive investigation</strong>, the daily motion of every incident responder: find something bad, then ask what touched it and what it spawned.</p>
+  </div>
+</section>
+
+<!-- 03 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">03 · The transplant</div>
+    <h2 style="margin-top:20px">Agent tooling is at the antivirus stage.</h2>
+    <p class="lede">Gateways check calls one at a time against policy. That's the file scanner. What doesn't exist anywhere is the tree — no record of which job a call belonged to, what that job read, or what it produced. Every tool call is an orphan.</p>
+
+    <div class="orphan-wrap">
+      <div class="ghost">no parent object exists</div>
+      <div class="orphans">
+        <span>github.create_pr</span><span>slack.post</span><span>grafana.query</span>
+        <span>jira.comment</span><span>confluence.write</span><span>github.read</span>
+        <span>slack.post</span><span>grafana.query</span><span>jira.create</span>
+        <span>confluence.read</span><span>github.merge</span><span>slack.post</span>
+      </div>
+      <div class="orphan-cap">1,406 events · 0 lineage · no way to group them into work</div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">04 · The mapping</div>
+    <h2 style="margin-top:20px">Same shape, different noun.</h2>
+
+    <div class="map">
+      <div class="r head"><div class="c l">Endpoint security</div><div class="mid"></div><div class="c r2">Agent work</div></div>
+      <div class="r"><div class="c l">process</div><div class="mid">≈</div><div class="c r2">unit of work</div></div>
+      <div class="r"><div class="c l">process tree · fork</div><div class="mid">≈</div><div class="c r2">sub-agents, delegated work</div></div>
+      <div class="r"><div class="c l">file reads</div><div class="mid">≈</div><div class="c r2">what went into the model's window</div></div>
+      <div class="r"><div class="c l">writes · network calls</div><div class="mid">≈</div><div class="c r2">tickets, PRs, docs, messages</div></div>
+      <div class="r"><div class="c l">lineage · provenance</div><div class="mid">≈</div><div class="c r2">what this output was derived from</div></div>
+      <div class="r key"><div class="c l">"which processes touched this hash?"</div><div class="mid">≈</div><div class="c r2">"what did that poisoned doc affect?"</div></div>
+    </div>
+
+    <div class="keynote">
+      <p>The last row is the one that lands with a security person. Finding a bad hash and querying which machines ran it and what those processes spawned is the most common investigative move in the field — done weekly, by everyone. <strong>For agent work that query isn't slow or expensive. It's impossible</strong>, because the subject it asks about doesn't exist.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">05 · The objection, and the answer</div>
+    <h2 style="margin-top:20px">"Won't the gateway just add this?"</h2>
+    <p class="lede">Firewalls did not kill CrowdStrike. Network security did not absorb endpoint security. Both categories are enormous and both still exist, because they sit in different places and therefore see different things. A network tap cannot observe what a process did with a file already on disk — not because the vendor hasn't gotten to it, but because of where it sits.</p>
+
+    <p style="margin-top:18px"><strong>To be precise about it:</strong> the gateway is not blind to incoming data. It's a proxy, so it sees <em>both</em> directions of anything that crosses it — a Confluence page fetched through it is fully visible. The limitation isn't in versus out. It's <span class="hl">transits versus bypasses</span>.</p>
+
+    <div class="vantage">
+      <div class="v-zone v-in">
+        <div class="lbl">Fills the window · never crosses the gateway</div>
+        <div class="v-items">
+          <span>pasted text</span><span>local file read</span><span>built-in web fetch</span>
+          <span>prior conversation</span><span>system + project instructions</span><span>screenshot</span>
+          <span>subagent summary</span><span>IDE buffers</span><span>in-app retrieval</span>
+        </div>
+      </div>
+      <div class="wire">
+        <span class="w">◄ proxied · both directions visible ►</span>
+        <span class="eye">gateway sits here</span>
+      </div>
+      <div class="v-zone v-out">
+        <div class="lbl">Crosses the gateway · fully logged</div>
+        <div class="v-items">
+          <span>jira.comment →</span><span>github.create_pr →</span>
+          <span>← confluence.get_page</span><span>← grafana.query result</span>
+        </div>
+      </div>
+      <div class="v-verdict">
+        <div class="a"><div class="k">The gateway sees</div><div class="val">both directions of what crosses it</div></div>
+        <div class="b"><div class="k">The gateway cannot see</div><div class="val">anything that never does</div></div>
+      </div>
+    </div>
+
+    <div class="pull">A proxy sees what crosses it.<br><span class="r">Most of the window never does.</span></div>
+    <p style="margin-top:24px">Coverage of what entered the model is only as good as coverage of the channels it entered through — and the gateway is one channel among many. Neither vantage point alone sees the whole picture. That's an argument for a second one, not a feature request to the first.</p>
+  </div>
+</section>
+
+<!-- 06 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">06 · Sequencing</div>
+    <h2 style="margin-top:20px">Visibility first. Control second.</h2>
+    <p class="lede">Nobody bought EDR to stop things. They bought it to finally see what was happening on their machines, and blocking arrived later, once the telemetry had earned trust. The order matters, because it decides what this gets pitched as.</p>
+
+    <div class="rail">
+      <div class="stop"><div class="yr">1987 — 2010</div><div class="ev">Antivirus. <b>Per-file verdicts.</b> Works until attacks span time and legitimate tools.</div></div>
+      <div class="stop"><div class="yr">2013</div><div class="ev">EDR named as a category. <b>The subject becomes the process.</b> Sold on visibility, not blocking.</div></div>
+      <div class="stop"><div class="yr">2015 — 2020</div><div class="ev">Adoption follows breaches. Telemetry becomes non-optional; <b>response features arrive after trust.</b></div></div>
+      <div class="stop now"><div class="yr">Now</div><div class="ev">Agent gateways. <b>Per-call verdicts.</b> No durable subject. Same limitation, new domain.</div></div>
+    </div>
+
+    <div class="two">
+      <div>
+        <div class="h">If we lead with</div>
+        <div class="s bad">A new authorization model</div>
+        <p>We attack a funded incumbent at their strongest point, with a story that only makes sense to companies that already run approval bureaucracy.</p>
+      </div>
+      <div>
+        <div class="h">If we lead with</div>
+        <div class="s good">You can't answer what your agents did</div>
+        <p>A gap anyone can verify in a single customer conversation. Control becomes the consequence, and it arrives second — if at all.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">07 · Say this before they do</div>
+    <div class="risk" style="margin-top:24px">
+      <div class="l">The honest part</div>
+      <h3>EDR was a hard sell for years.</h3>
+      <p>Heavyweight, invasive, endless complaints about performance and about installing one more thing on every machine. The category only became non-optional after enough breaches made the telemetry impossible to argue with.</p>
+      <p><strong>That is exactly the timing risk here</strong>, and anyone in endpoint security already knows it. Name it first — volunteering the weakness reads as judgment, getting caught by it reads as a pitch.</p>
+      <p>The thing that would make this inevitable — the first agent-caused incident a company publicly cannot explain — hasn't happened yet. Whether that means start now or wait is a real question, not a rhetorical one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 08 -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">08 · How to present this</div>
+    <h2 style="margin-top:20px">Assert the diagnosis. Hedge the solution.</h2>
+    <p class="lede">These are two different claims and they don't deserve the same confidence. Wrapping both in the same tentative framing makes the defensible half sound as unsupported as the open half, and the room discounts everything.</p>
+
+    <div class="tiers">
+      <div class="tier say">
+        <div class="h">Say with conviction</div>
+        <ul>
+          <li>There is no durable unit of agentic work</li>
+          <li>Every tool call is an orphan event</li>
+          <li>A proxy can't record what never crosses it</li>
+          <li>Nobody can answer "what did that source affect"</li>
+          <li>This is the shape EDR already solved once</li>
+        </ul>
+        <div class="f">Defensible today, against a skeptic.</div>
+      </div>
+      <div class="tier open">
+        <div class="h">Say as genuinely open</div>
+        <ul>
+          <li>Who feels this most, and how badly</li>
+          <li>What the right atom of the record is</li>
+          <li>Whether result sets are actionable or noise</li>
+          <li>Where instrumentation should sit</li>
+          <li>Whether it's forensics or reporting</li>
+        </ul>
+        <div class="f">Unknown until the conversations happen.</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:60px">The order to put them in</h3>
+    <div class="rail" style="margin-top:22px">
+      <div class="stop"><div class="yr">01 · assert</div><div class="ev"><b>The gap.</b> No <em>ps</em> for agent work.</div></div>
+      <div class="stop"><div class="yr">02 · assert</div><div class="ev"><b>Why the incumbent can't close it.</b> Vantage point, not roadmap.</div></div>
+      <div class="stop"><div class="yr">03 · assert</div><div class="ev"><b>What I'm deliberately not doing.</b> Enforcement comes second — that's the order EDR won in.</div></div>
+      <div class="stop now"><div class="yr">04 · open</div><div class="ev"><b>What I don't know.</b> Specific, not vague. Specificity here reads as rigor.</div></div>
+      <div class="stop now"><div class="yr">05 · open</div><div class="ev"><b>How I'll find out.</b> Ten conversations, a fixed set of questions, a decision rule set in advance.</div></div>
+    </div>
+    <p style="margin-top:26px">Unknowns placed last read as rigor. The same unknowns placed first read as a disclaimer, and everything after them is heard through it.</p>
+
+    <div class="risk" style="margin-top:44px;border-color:var(--sig);background:rgba(79,209,224,.04)">
+      <div class="l" style="color:var(--sig)">The line that does the most work</div>
+      <h3 style="margin-top:12px">"If fewer than three of ten have a real story about not being able to answer what an agent touched, the timing answer is <em>not yet</em>."</h3>
+      <p>Naming a falsifiable decision rule — before running the test — is the strongest available signal that this is an investigation and not a pitch. It costs nothing and it's the thing a skeptical room is actually listening for.</p>
+    </div>
+
+    <div class="two" style="margin-top:44px">
+      <div>
+        <div class="h">If the room is customers</div>
+        <div class="s good">Lead with the gap. Stay quiet about the vision.</div>
+        <p>You want their story, not their agreement. The moment you describe the solution they start being helpful, and the data is worthless.</p>
+      </div>
+      <div>
+        <div class="h">If the room is investors or collaborators</div>
+        <div class="s good">The open questions are the asset.</div>
+        <p>Section 04 is what they're evaluating. Make it specific and show the test is already designed.</p>
+      </div>
+    </div>
+    <p style="margin-top:26px">Same material, opposite emphasis. The failure mode is running the customer version for investors, or the investor version for customers.</p>
+  </div>
+</section>
+
+<!-- 09 -->
+<section class="close">
+  <div class="wrap">
+    <div class="eyebrow">09 · The sixty-second version</div>
+    <div class="speech" style="margin-top:26px">
+      <div class="l">Say it like this</div>
+      <p>You know how antivirus checked one file at a time, and it fell apart against attacks that spread across processes and time? EDR fixed that by <strong>changing the subject</strong> — instead of scoring files, it recorded processes, with parents, children, and history. Once that object existed you could do behavioral detection, and you could ask the question that actually matters after the fact: <strong>this file was bad — which machines ran it, and what did those processes spawn?</strong></p>
+      <p>Agent tooling is at the antivirus stage. Gateways check calls one at a time. There's no process tree — no record of what job a call belonged to, what that job read, or what it produced. So when a document in your knowledge base turns out to be wrong or poisoned, nobody can tell you what it affected. The honest answer is <strong>"we don't know,"</strong> and it stays that way.</p>
+      <p>The gateway can't fix it, for the same reason your firewall vendor didn't kill CrowdStrike. It's a proxy — it sees everything that crosses it, in both directions, and nothing that doesn't. Pasted text, local files, built-in web fetch, prior turns, retrieval that happens inside the app: none of that touches the wire, and all of it ends up in the window. <strong>Different vantage point.</strong> That's the gap.</p>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer>
+    <span>Explain · The EDR Analogy</span>
+    <span>Borrowed argument · lands in 30 seconds</span>
+  </footer>
+</div>
+
+<script>
+const io=new IntersectionObserver(es=>{es.forEach((e,i)=>{if(e.isIntersecting){
+  e.target.style.animation=`rise .8s cubic-bezier(.2,.7,.2,1) ${i*70}ms forwards`;io.unobserve(e.target);}})},{threshold:.1});
+document.querySelectorAll('section h2, section > .wrap > p, .seq, .panes .pane, .orphan-wrap, .map, .keynote, .vantage, .pull, .rail, .two > div, .risk, .speech')
+  .forEach(el=>{el.style.opacity='0';el.style.transform='translateY(16px)';io.observe(el);});
+
+// sequence
+const seq=document.getElementById('seq'),sb=document.getElementById('seqbtn'),sc=document.getElementById('seqcap');
+sb.addEventListener('click',()=>{
+  seq.classList.toggle('armed');
+  const on=seq.classList.contains('armed');
+  sc.classList.toggle('on',on);
+  sb.textContent=on?'View them individually':'View them as one chain';
+  sc.textContent=on?'One chain: document → script → persistence → credential theft. Nothing scored it, because nothing was watching a sequence.'
+                   :'Four unremarkable events. Every checker says yes.';
+});
+
+// tree query
+const tb=document.getElementById('treebtn'),tr=document.getElementById('tres');
+const order=['hit','b','a','root','c'];
+tb.addEventListener('click',()=>{
+  if(tb.classList.contains('done'))return;
+  tb.classList.add('done');tb.textContent='Query returned · lineage reconstructed';
+  order.forEach((k,i)=>setTimeout(()=>{
+    const n=document.querySelector(`[data-k="${k}"]`);
+    n.classList.add(k==='hit'?'hot':'lit');
+    if(k==='hit')n.querySelector('.meta').textContent='MATCH';
+  },i*300));
+  setTimeout(()=>{tr.classList.add('on');
+    tr.textContent='3 endpoints · 7 processes · full ancestry and 2 spawned children identified';},order.length*300+250);
+});
+</script>
+</body>
+</html>
