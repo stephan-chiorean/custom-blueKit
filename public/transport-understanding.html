@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Transport Understanding — semantic telemetry</title>
+<meta name="description" content="Today's telemetry pipeline defers understanding until the very end. Semantic telemetry moves it into the pipeline, so every downstream consumer starts from meaning instead of raw evidence." />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Transport Understanding — semantic telemetry" />
+<meta property="og:description" content="Today's telemetry pipeline defers understanding until the very end. Semantic telemetry moves it into the pipeline, so every downstream consumer starts from meaning instead of raw evidence." />
+<meta property="og:image" content="/og-image.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<style>
+  :root {
+    --ink:       #101418;
+    --ink-2:     #3A454F;
+    --paper:     #EDEFF1;
+    --surface:   #FFFFFF;
+    --surface-2: #E3E7EA;
+    --line:      #CBD2D7;
+    --muted:     #6A7681;
+    --teal:      #1F6F78;
+    --live:      #00858C;
+    --glow:      rgba(31, 111, 120, 0.13);
+    --raw:       #97A2AC;
+
+    --f-display: "Futura", "Avenir Next", "Trebuchet MS", system-ui, sans-serif;
+    --f-body:    "Avenir Next", "Avenir", "Segoe UI", system-ui, sans-serif;
+    --f-mono:    ui-monospace, "SF Mono", "Menlo", "Consolas", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ink: #E8ECEF; --ink-2: #AEBAC4; --paper: #0C1013; --surface: #151B20;
+      --surface-2: #1E262C; --line: #2C363D; --muted: #7E8C99;
+      --teal: #4FB3BC; --live: #35C6CE; --glow: rgba(79, 179, 188, 0.16);
+      --raw: #5B6772;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #E8ECEF; --ink-2: #AEBAC4; --paper: #0C1013; --surface: #151B20;
+    --surface-2: #1E262C; --line: #2C363D; --muted: #7E8C99;
+    --teal: #4FB3BC; --live: #35C6CE; --glow: rgba(79, 179, 188, 0.16);
+    --raw: #5B6772;
+  }
+  :root[data-theme="light"] {
+    --ink: #101418; --ink-2: #3A454F; --paper: #EDEFF1; --surface: #FFFFFF;
+    --surface-2: #E3E7EA; --line: #CBD2D7; --muted: #6A7681;
+    --teal: #1F6F78; --live: #00858C; --glow: rgba(31, 111, 120, 0.13);
+    --raw: #97A2AC;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 clamp(1.1rem, 4vw, 2.5rem); }
+
+  h1 {
+    font-family: var(--f-display);
+    font-size: clamp(2rem, 5.2vw, 3.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h2 {
+    font-family: var(--f-display);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    text-wrap: balance;
+  }
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--teal);
+    margin: 0;
+  }
+  .lede { color: var(--ink-2); max-width: 62ch; margin: 0; text-wrap: pretty; }
+  .note { color: var(--muted); font-size: 0.9rem; max-width: 66ch; text-wrap: pretty; }
+
+  header { padding: clamp(2.6rem, 8vh, 4.6rem) 0 clamp(1.6rem, 4vh, 2.4rem); }
+  .header-inner { display: flex; flex-direction: column; gap: 1rem; }
+
+  section { padding: clamp(2rem, 6vh, 3.4rem) 0; border-top: 1px solid var(--line); }
+  .sec-head { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: clamp(1.6rem, 4vh, 2.4rem); }
+
+  /* ─── theme toggle ───────────────────────────────── */
+  .toggle {
+    position: fixed; top: 1rem; right: 1rem; z-index: 20;
+    font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 999px; padding: 0.45rem 0.85rem; cursor: pointer;
+  }
+  .toggle:hover { color: var(--teal); border-color: var(--teal); }
+
+  /* ─── pipelines ──────────────────────────────────── */
+
+  .pipes {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(1.2rem, 3.5vw, 2.6rem);
+    align-items: start;
+  }
+
+  .pipe {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.4rem clamp(1rem, 2.5vw, 1.6rem) 1.6rem;
+  }
+  .pipe.after { box-shadow: 0 0 0 1px var(--glow), 0 18px 40px -28px var(--glow); }
+
+  .pipe-head { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; margin-bottom: 1.2rem; }
+  .pipe-title { font-family: var(--f-display); font-weight: 600; font-size: 1.05rem; letter-spacing: -0.01em; }
+  .pipe-tag {
+    font-family: var(--f-mono); font-size: 0.62rem; text-transform: uppercase;
+    letter-spacing: 0.16em; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px; padding: 0.2rem 0.55rem;
+    white-space: nowrap;
+  }
+  .pipe.after .pipe-tag { color: var(--live); border-color: var(--live); }
+
+  .rail-area { position: relative; }
+
+  /* the moving-dot layer sits behind the nodes */
+  .rail {
+    position: absolute; left: 50%; top: 0; bottom: 0; width: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(to bottom, transparent, var(--line) 6%, var(--line) 94%, transparent);
+    z-index: 0;
+  }
+  .packet {
+    position: absolute; left: 50%; top: 0;
+    width: 9px; height: 9px; border-radius: 2px;
+    margin-left: -4.5px; margin-top: -4.5px;
+    z-index: 1;
+    animation: fall 5.2s linear infinite;
+  }
+  .pipe.before .packet { animation-name: fall-late; }
+  .pipe.after  .packet { animation-name: fall-early; }
+
+  @keyframes fall-late {
+    0%   { transform: translateY(0);    background: var(--raw); border-radius: 2px; opacity: 0; }
+    4%   { opacity: 1; }
+    86%  { background: var(--raw); border-radius: 2px; }
+    91%  { background: var(--live); border-radius: 999px; box-shadow: 0 0 9px var(--live); }
+    96%  { opacity: 1; }
+    100% { transform: translateY(var(--rail-h)); background: var(--live); border-radius: 999px; opacity: 0; }
+  }
+  @keyframes fall-early {
+    0%   { transform: translateY(0);    background: var(--raw); border-radius: 2px; opacity: 0; }
+    4%   { opacity: 1; }
+    16%  { background: var(--raw); border-radius: 2px; }
+    24%  { background: var(--live); border-radius: 999px; box-shadow: 0 0 9px var(--live); }
+    96%  { opacity: 1; }
+    100% { transform: translateY(var(--rail-h)); background: var(--live); border-radius: 999px; opacity: 0; }
+  }
+
+  .stages { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 0.85rem; }
+
+  .stage {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 0.7rem 0.9rem;
+    text-align: center;
+  }
+  .stage .s-name { font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; }
+  .stage .s-sub  { font-family: var(--f-mono); font-size: 0.66rem; color: var(--muted); letter-spacing: 0.06em; margin-top: 0.15rem; }
+
+  .stage.raw   { border-style: dashed; color: var(--ink-2); }
+  .stage.human { background: var(--surface-2); }
+  .stage.understanding {
+    border-color: var(--live);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px var(--glow);
+  }
+  .stage.understanding .s-name { color: var(--live); }
+
+  /* meaning line marker */
+  .meaning-mark {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; gap: 0.6rem;
+    margin: 0.85rem 0;
+  }
+  .meaning-mark::before, .meaning-mark::after {
+    content: ""; flex: 1; height: 0; border-top: 1px dashed var(--live);
+  }
+  .meaning-mark span {
+    font-family: var(--f-mono); font-size: 0.6rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--live); white-space: nowrap;
+  }
+
+  .pipe-foot {
+    margin-top: 1.2rem; padding-top: 0.9rem; border-top: 1px solid var(--line);
+    font-size: 0.86rem; color: var(--ink-2); text-wrap: pretty;
+  }
+  .pipe-foot b { color: var(--ink); font-weight: 600; }
+
+  /* ─── compounding / fan-out ──────────────────────── */
+
+  .compound { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.2rem, 3.5vw, 2.6rem); align-items: start; }
+
+  .panel {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; padding: 1.4rem clamp(1rem, 2.5vw, 1.6rem) 1.5rem;
+  }
+  .panel.good { box-shadow: 0 0 0 1px var(--glow), 0 18px 40px -28px var(--glow); }
+
+  .dup-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; margin-top: 1.1rem; }
+  .dup {
+    border: 1px dashed var(--line); border-radius: 8px; padding: 0.6rem 0.4rem;
+    text-align: center;
+  }
+  .dup .d-infer {
+    font-family: var(--f-mono); font-size: 0.58rem; letter-spacing: 0.1em;
+    color: var(--muted); border: 1px solid var(--line); border-radius: 5px;
+    padding: 0.16rem 0.3rem; display: inline-block; margin-bottom: 0.4rem;
+    animation: churn 2.4s ease-in-out infinite;
+  }
+  .dup:nth-child(2) .d-infer { animation-delay: .3s; }
+  .dup:nth-child(3) .d-infer { animation-delay: .6s; }
+  .dup:nth-child(4) .d-infer { animation-delay: .9s; }
+  .dup:nth-child(5) .d-infer { animation-delay: 1.2s; }
+  .dup:nth-child(6) .d-infer { animation-delay: 1.5s; }
+  .dup .d-name { font-size: 0.8rem; font-weight: 600; }
+  @keyframes churn {
+    0%, 100% { opacity: 0.35; border-color: var(--line); }
+    50%      { opacity: 1;    border-color: var(--raw); }
+  }
+
+  .fan-src {
+    margin: 0 auto 0.2rem; max-width: 260px;
+    border: 1px solid var(--live); border-radius: 9px;
+    background: var(--surface); box-shadow: 0 0 0 3px var(--glow);
+    padding: 0.65rem 0.9rem; text-align: center;
+  }
+  .fan-src .s-name { color: var(--live); font-weight: 600; font-size: 0.95rem; }
+  .fan-src .s-sub { font-family: var(--f-mono); font-size: 0.64rem; color: var(--muted); letter-spacing: 0.06em; }
+
+  .fan-svg { display: block; width: 100%; height: 88px; overflow: visible; }
+  .fan-svg path { fill: none; stroke: var(--live); stroke-width: 1.4; opacity: 0.45; }
+  .fan-svg path.flow {
+    opacity: 1; stroke-dasharray: 5 190; stroke-linecap: round;
+    animation: flow 2.6s linear infinite;
+  }
+  @keyframes flow { from { stroke-dashoffset: 195; } to { stroke-dashoffset: 0; } }
+
+  .fan-out { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
+  .cons {
+    border: 1px solid var(--line); border-radius: 8px; padding: 0.55rem 0.4rem;
+    text-align: center; font-size: 0.8rem; font-weight: 600;
+    background: var(--surface);
+  }
+  .cons small { display: block; font-family: var(--f-mono); font-weight: 400; font-size: 0.56rem; letter-spacing: 0.1em; color: var(--live); text-transform: uppercase; margin-top: 0.15rem; }
+
+  .cost {
+    margin-top: 1.1rem; font-family: var(--f-mono); font-size: 0.7rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .cost.bad  { color: var(--muted); }
+  .cost.good { color: var(--live); }
+
+  /* ─── pull quote ─────────────────────────────────── */
+
+  .quote { text-align: center; padding: clamp(2.4rem, 7vh, 4rem) 0; }
+  .quote p {
+    font-family: var(--f-display); font-weight: 600;
+    font-size: clamp(1.3rem, 3.4vw, 2.1rem); line-height: 1.22;
+    letter-spacing: -0.02em; margin: 0 auto; max-width: 22ch; text-wrap: balance;
+  }
+  .quote .strike { color: var(--muted); }
+  .quote .hi { color: var(--live); }
+  .quote .sub { font-family: var(--f-mono); font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 1.2rem; }
+
+  footer { padding: 2.4rem 0 3.4rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
+
+  @media (max-width: 780px) {
+    .pipes, .compound { grid-template-columns: minmax(0, 1fr); }
+    .dup-grid, .fan-out { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .packet { animation: none; opacity: 0 !important; }
+    .fan-svg path.flow { animation: none; stroke-dasharray: none; }
+    .dup .d-infer { animation: none; opacity: 0.8; }
+  }
+</style>
+</head>
+<body>
+
+<button class="toggle" id="themeBtn">theme</button>
+
+<div class="wrap">
+
+  <header>
+    <div class="header-inner">
+      <p class="eyebrow">Semantic Telemetry</p>
+      <h1>We spent decades optimizing how systems transport telemetry. The next step is transporting understanding.</h1>
+      <p class="lede">
+        Today's pipeline defers understanding until the very end — after the logs, after the storage,
+        after the dashboards. Everything upstream is deliberately semantics-agnostic. Move understanding
+        <em>into</em> the pipeline and every downstream consumer starts from meaning instead of raw evidence.
+      </p>
+    </div>
+  </header>
+
+  <!-- ── PIPELINES ────────────────────────────────── -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">Where meaning appears</p>
+      <h2>The same execution, two pipelines</h2>
+      <p class="note">Each square is one event in flight. Watch where it stops being a string and becomes a fact.</p>
+    </div>
+
+    <div class="pipes">
+
+      <!-- BEFORE -->
+      <div class="pipe before">
+        <div class="pipe-head">
+          <span class="pipe-title">Today</span>
+          <span class="pipe-tag">transports data</span>
+        </div>
+
+        <div class="rail-area" id="railBefore">
+          <div class="rail"></div>
+          <div class="packet" style="animation-delay: 0s"></div>
+          <div class="packet" style="animation-delay: -1.3s"></div>
+          <div class="packet" style="animation-delay: -2.6s"></div>
+          <div class="packet" style="animation-delay: -3.9s"></div>
+
+          <div class="stages">
+            <div class="stage"><div class="s-name">Execution</div></div>
+            <div class="stage raw"><div class="s-name">Logs · Metrics · Traces</div><div class="s-sub">strings + numbers</div></div>
+            <div class="stage raw"><div class="s-name">Transport</div><div class="s-sub">semantics-agnostic</div></div>
+            <div class="stage raw"><div class="s-name">Storage</div><div class="s-sub">indexed bytes</div></div>
+            <div class="stage raw"><div class="s-name">Queries · Dashboards</div><div class="s-sub">grep + time window</div></div>
+            <div class="stage human"><div class="s-name">Humans / LLMs</div><div class="s-sub">3am, under pressure</div></div>
+          </div>
+
+          <div class="meaning-mark"><span>meaning appears here</span></div>
+
+          <div class="stages">
+            <div class="stage understanding"><div class="s-name">Understanding</div><div class="s-sub">derived once, then discarded</div></div>
+          </div>
+        </div>
+
+        <p class="pipe-foot">
+          Understanding is the <b>last</b> step, it lives in one person's head, and it
+          <b>doesn't survive the incident</b>. The next engineer derives it again from scratch.
+        </p>
+      </div>
+
+      <!-- AFTER -->
+      <div class="pipe after">
+        <div class="pipe-head">
+          <span class="pipe-title">Semantic telemetry</span>
+          <span class="pipe-tag">transports meaning</span>
+        </div>
+
+        <div class="rail-area" id="railAfter">
+          <div class="rail"></div>
+          <div class="packet" style="animation-delay: 0s"></div>
+          <div class="packet" style="animation-delay: -1.3s"></div>
+          <div class="packet" style="animation-delay: -2.6s"></div>
+          <div class="packet" style="animation-delay: -3.9s"></div>
+
+          <div class="stages">
+            <div class="stage"><div class="s-name">Execution</div></div>
+            <div class="stage understanding"><div class="s-name">Semantic Events</div><div class="s-sub">typed at the source</div></div>
+          </div>
+
+          <div class="meaning-mark"><span>meaning appears here</span></div>
+
+          <div class="stages">
+            <div class="stage"><div class="s-name">Understanding</div><div class="s-sub">classify · entities · severity</div></div>
+            <div class="stage"><div class="s-name">Context Correlation</div><div class="s-sub">same order, same customer</div></div>
+            <div class="stage"><div class="s-name">Semantic Store</div><div class="s-sub">grouped by meaning</div></div>
+            <div class="stage"><div class="s-name">Consumers</div><div class="s-sub">start from facts</div></div>
+          </div>
+        </div>
+
+        <p class="pipe-foot">
+          Meaning is created <b>once, early</b>, and everything downstream inherits it.
+          The expensive interpretation is <b>paid once and reused</b>.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── COMPOUNDING ──────────────────────────────── -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">The consequence</p>
+      <h2>Understanding compounds</h2>
+      <p class="note">With five or six downstream products, deferred understanding means each one independently re-infers what happened from the same raw evidence.</p>
+    </div>
+
+    <div class="compound">
+
+      <div class="panel">
+        <div class="pipe-head">
+          <span class="pipe-title">Today — inferred N times</span>
+          <span class="pipe-tag">duplicated</span>
+        </div>
+        <div class="stage raw" style="margin-bottom:0.2rem"><div class="s-name">Raw logs</div><div class="s-sub">no shared meaning</div></div>
+        <div class="dup-grid">
+          <div class="dup"><span class="d-infer">⟳ infer</span><div class="d-name">Notifications</div></div>
+          <div class="dup"><span class="d-infer">⟳ infer</span><div class="d-name">Incident</div></div>
+          <div class="dup"><span class="d-infer">⟳ infer</span><div class="d-name">Security</div></div>
+          <div class="dup"><span class="d-infer">⟳ infer</span><div class="d-name">Analytics</div></div>
+          <div class="dup"><span class="d-infer">⟳ infer</span><div class="d-name">AI Agents</div></div>
+          <div class="dup"><span class="d-infer">⟳ infer</span><div class="d-name">Automation</div></div>
+        </div>
+        <p class="cost bad">interpretation cost × 6 · six chances to disagree</p>
+      </div>
+
+      <div class="panel good">
+        <div class="pipe-head">
+          <span class="pipe-title">Semantic — understood once</span>
+          <span class="pipe-tag">shared</span>
+        </div>
+        <div class="fan-src">
+          <div class="s-name">Understanding</div>
+          <div class="s-sub">one canonical interpretation</div>
+        </div>
+
+        <svg class="fan-svg" viewBox="0 0 1000 88" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M500 0 C 500 44, 167 44, 167 88" />
+          <path d="M500 0 C 500 44, 500 44, 500 88" />
+          <path d="M500 0 C 500 44, 833 44, 833 88" />
+          <path d="M500 0 C 500 50, 167 38, 167 88" class="flow" style="animation-delay:0s" />
+          <path d="M500 0 C 500 50, 500 38, 500 88" class="flow" style="animation-delay:-0.9s" />
+          <path d="M500 0 C 500 50, 833 38, 833 88" class="flow" style="animation-delay:-1.8s" />
+        </svg>
+
+        <div class="fan-out">
+          <div class="cons">Notifications<small>reuses</small></div>
+          <div class="cons">Incident<small>reuses</small></div>
+          <div class="cons">Security<small>reuses</small></div>
+          <div class="cons">Analytics<small>reuses</small></div>
+          <div class="cons">AI Agents<small>reuses</small></div>
+          <div class="cons">Automation<small>reuses</small></div>
+        </div>
+
+        <p class="cost good">interpretation cost × 1 · one version of the truth</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── FRAMING ──────────────────────────────────── -->
+  <section>
+    <div class="quote">
+      <p>
+        Current telemetry pipelines preserve <span class="strike">data</span>.<br>
+        AI-native pipelines preserve <span class="hi">meaning</span>.
+      </p>
+      <div class="sub">an information pipeline → a knowledge pipeline</div>
+    </div>
+
+    <p class="note" style="margin: 0 auto; text-align: center;">
+      Pipelines today aren't opaque — they're deliberately <b>semantics-agnostic</b>. OpenTelemetry, Kafka and
+      Datadog are designed to move arbitrary events reliably without imposing meaning. That neutrality is a
+      feature for general-purpose infrastructure. It is also why understanding never accumulates.
+    </p>
+  </section>
+
+  <footer>
+    Transport Understanding · semantic telemetry · bluekit/ideas/semantic-telemetry
+  </footer>
+
+</div>
+
+<script>
+  // rail height for the falling-packet keyframes
+  function sizeRails() {
+    document.querySelectorAll('.rail-area').forEach(function (el) {
+      el.style.setProperty('--rail-h', el.offsetHeight + 'px');
+    });
+  }
+  sizeRails();
+  window.addEventListener('resize', sizeRails);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeRails);
+
+  // theme toggle
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var root = document.documentElement;
+    var current = root.getAttribute('data-theme');
+    if (!current) {
+      current = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    root.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+  });
+</script>
+
+</body>
+</html>
