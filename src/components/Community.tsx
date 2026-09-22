@@ -19,7 +19,7 @@ export function Community() {
               Build better systems with other BlueKit users.
             </Text>
             <Text color="text.secondary" fontSize="15.5px" lineHeight="1.75" maxW="780px">
-              Share workflows, compare block libraries, and swap practical implementation patterns with teams who run local-first.
+              Share context workflows, and swap practical implementation patterns with teams who run local-first.
             </Text>
             <HStack gap="10px" flexWrap="wrap" pt="6px">
               <Link href="#" px="14px" py="8px" borderRadius="10px" border="1px solid rgba(66, 135, 245, 0.35)" color="primary.300" _hover={{ textDecoration: 'none', bg: 'rgba(66, 135, 245, 0.14)', color: 'white' }}>

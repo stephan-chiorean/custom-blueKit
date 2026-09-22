@@ -190,7 +190,7 @@ export function Hero() {
             gap={{ base: "8px", md: "10px" }}
           >
             {[
-              "Map your intentions",
+              "Organize by context",
               "Trace your understanding",
               "Built-in tooling",
               "No plugin hell",

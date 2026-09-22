@@ -30,7 +30,7 @@ const steps: Step[] = [
     number: '02',
     title: 'Build your context',
     description:
-      'Create maps to organize your thinking, flag notes with markers, and group reusable context into blocks.',
+      'Open a Context for the thread you\'re working on — link the docs that matter, jot typed notes, and track tasks, all in one place.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <rect x="5" y="3.5" width="14" height="17" rx="2" stroke="currentColor" strokeWidth="1.7" />
