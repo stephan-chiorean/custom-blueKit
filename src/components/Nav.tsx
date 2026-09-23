@@ -2,7 +2,9 @@ import { Box, Container, HStack, Image, Link, Text } from '@chakra-ui/react';
 import catLogo from '../assets/cat.svg';
 
 const links = [
-  { label: 'Features', href: '#features' },
+  { label: 'Why', href: '#why' },
+  { label: 'Contexts', href: '#contexts' },
+  { label: 'Agents', href: '#agents' },
   { label: 'How it works', href: '#how' },
 ];
 

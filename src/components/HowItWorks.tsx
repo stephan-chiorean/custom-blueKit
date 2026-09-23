@@ -1,5 +1,5 @@
 import { Box, Container, Grid, Text, VStack } from '@chakra-ui/react';
-import { useEffect, useRef } from 'react';
+import { useReveal } from '../hooks/useReveal';
 import type { ReactNode } from 'react';
 
 type Step = {
@@ -12,9 +12,9 @@ type Step = {
 const steps: Step[] = [
   {
     number: '01',
-    title: 'Point it at a project',
+    title: 'Open a project',
     description:
-      'Open any project folder. BlueKit attaches to it instantly. No setup, no config files required.',
+      'Point BlueKit at any folder. It keeps a notebook of plain markdown inside it, so the thinking lives next to the code.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path
@@ -28,9 +28,9 @@ const steps: Step[] = [
   },
   {
     number: '02',
-    title: 'Build your context',
+    title: 'Start a context',
     description:
-      'Open a Context for the thread you\'re working on — link the docs that matter, jot typed notes, and track tasks, all in one place.',
+      'Name the thread of work and pick its kind. Link the docs that matter, and add notes and tasks as you go.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <rect x="5" y="3.5" width="14" height="17" rx="2" stroke="currentColor" strokeWidth="1.7" />
@@ -40,10 +40,10 @@ const steps: Step[] = [
   },
   {
     number: '03',
-    title: 'Everything stays local',
+    title: 'Bring your agent in',
     description: (
       <>
-        Your SQLite database lives at{' '}
+        In Claude Code, Codex, or Cursor, say{' '}
         <Text
           as="code"
           fontFamily="mono"
@@ -54,93 +54,53 @@ const steps: Step[] = [
           py="2px"
           borderRadius="4px"
         >
-          ~/.bluekit
+          connect to the auth context
         </Text>
-        . No cloud, no accounts, no data leaving your machine.
+        . The agent picks up where you are and writes back what it does.
       </>
     ),
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.7" />
-        <path d="M8 10V7.5a4 4 0 1 1 8 0V10" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M4 17l6-5-6-5M12 19h8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
   },
   {
     number: '04',
-    title: 'Knowledge travels with your code',
-    description: (
-      <>
-        Your notebook lives inside{' '}
-        <Text
-          as="code"
-          fontFamily="mono"
-          fontSize="12px"
-          color="primary.300"
-          bg="rgba(66, 135, 245, 0.1)"
-          px="6px"
-          py="2px"
-          borderRadius="4px"
-        >
-          .bluekit/
-        </Text>{' '}
-        so your context moves with your repo.
-      </>
-    ),
+    title: 'Close it out',
+    description:
+      'When the work is done, complete the context with a short retro. It leaves your tabs, and the record of what happened stays.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.7" />
+        <path d="M8.5 12.2l2.4 2.4 4.6-5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
   },
 ];
 
 export function HowItWorks() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) {
-      return;
-    }
-
-    const items = Array.from(section.querySelectorAll<HTMLElement>('.reveal'));
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('in');
-            observer.unobserve(entry.target as Element);
-          }
-        });
-      },
-      { threshold: 0.08, rootMargin: '0px 0px -36px 0px' }
-    );
-
-    items.forEach((item) => observer.observe(item));
-    return () => observer.disconnect();
-  }, []);
+  const sectionRef = useReveal<HTMLElement>();
 
   return (
     <Box as="section" id="how" pt={{ base: '70px', md: '96px' }} pb={{ base: '80px', md: '96px' }} ref={sectionRef}>
       <Container maxW="1160px" px={{ base: '20px', md: '32px' }}>
         <VStack gap="12px" maxW="2xl" mx="auto" textAlign="center" mb={{ base: '56px', md: '64px' }}>
           <Text
-            fontSize="20px"
-            fontWeight="700"
-            letterSpacing="0.13em"
+            fontSize="12px"
+            fontWeight="600"
+            letterSpacing="0.16em"
             textTransform="uppercase"
-            color="primary.500"
+            color="primary.400"
             fontFamily="mono"
           >
             How it works
           </Text>
-          <Text as="h2" fontSize={{ base: '3xl', md: '4xl' }} fontWeight="700" lineHeight="1.05" letterSpacing="-0.02em">
-            Build context without <Box as="span" color="primary.500">breaking flow</Box>
+          <Text as="h2" color="white" fontSize={{ base: '32px', md: '42px', lg: '48px' }} fontWeight="700" lineHeight="1.06" letterSpacing="-0.025em">
+            From question to <Box as="span" color="primary.500">done</Box>.
           </Text>
-          <Text color="fg.muted" fontSize="md">
-            No onboarding maze, just a clean timeline from project open to reusable knowledge.
+          <Text color="rgba(255,255,255,0.66)" fontSize={{ base: '16px', md: '17px' }}>
+            No setup, no account. Four steps, and the first one takes a minute.
           </Text>
         </VStack>
 
@@ -172,6 +132,7 @@ export function HowItWorks() {
                 >
                   <Box
                     order={{ base: 1, md: 0 }}
+                    gridRow={{ base: 'auto', md: '1' }}
                     gridColumn={{ base: '1 / -1', md: isEven ? '1 / 2' : '3 / 4' }}
                     justifySelf={{ base: 'stretch', md: isEven ? 'end' : 'start' }}
                     textAlign={{ base: 'left', md: isEven ? 'right' : 'left' }}
@@ -192,17 +153,18 @@ export function HowItWorks() {
                       {step.number}
                     </Text>
 
-                    <Text fontSize="xl" fontWeight="600" lineHeight="1.3">
+                    <Text color="white" fontSize="xl" fontWeight="600" lineHeight="1.3">
                       {step.title}
                     </Text>
 
-                    <Text mt="10px" color="fg.muted" fontSize="md" lineHeight="1.7">
+                    <Text mt="10px" color="rgba(255,255,255,0.62)" fontSize="md" lineHeight="1.7">
                       {step.description}
                     </Text>
                   </Box>
 
                   <Box
                     order={{ base: 0, md: 0 }}
+                    gridRow={{ base: 'auto', md: '1' }}
                     gridColumn={{ base: '1 / -1', md: '2 / 3' }}
                     w="64px"
                     h="64px"

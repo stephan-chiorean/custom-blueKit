@@ -1,4 +1,7 @@
-import { Box, Container, Link, Text, VStack } from '@chakra-ui/react';
+import { Box, Container, Grid, Link, Text, VStack } from '@chakra-ui/react';
+import { useReveal } from '../hooks/useReveal';
+import { DMG_URL, VERSION } from '../release';
+
 
 function AppleIcon() {
   return (
@@ -8,12 +11,49 @@ function AppleIcon() {
   );
 }
 
+const principles = [
+  {
+    title: 'On your machine',
+    text: 'Contexts, notes, and tasks live in a local database. No account, no cloud, nothing leaves your laptop.',
+  },
+  {
+    title: 'Markdown you own',
+    text: 'Docs are plain files in your project, versioned with git and readable in any editor.',
+  },
+  {
+    title: 'Free for individuals',
+    text: 'The whole app, for one person, at no cost. That’s not a trial.',
+  },
+];
+
 export function Download() {
+  const ref = useReveal<HTMLElement>();
+
   return (
-    <Box as="section" id="download" pt={{ base: '70px', md: '118px' }} pb={{ base: '80px', md: '128px' }}>
-      <Container maxW="1160px" px={{ base: '20px', md: '32px' }}>
+    <Box as="section" id="download" ref={ref} pt={{ base: '48px', md: '72px' }} pb={{ base: '80px', md: '128px' }}>
+      <Container maxW="1280px" px={{ base: '16px', md: '28px', lg: '36px' }}>
+        <Grid
+          templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }}
+          gap={{ base: '24px', md: '36px' }}
+          mb={{ base: '64px', md: '96px' }}
+          pt={{ base: '40px', md: '56px' }}
+          borderTop="1px solid rgba(255,255,255,0.07)"
+        >
+          {principles.map((p, i) => (
+            <Box key={p.title} className="reveal" style={{ transitionDelay: `${i * 0.08}s` }}>
+              <Text color="white" fontSize="17px" fontWeight="600">
+                {p.title}
+              </Text>
+              <Text mt="8px" color="rgba(255,255,255,0.6)" fontSize="15px" lineHeight="1.65">
+                {p.text}
+              </Text>
+            </Box>
+          ))}
+        </Grid>
+
         <Box
-          maxW="620px"
+          className="reveal"
+          maxW="640px"
           mx="auto"
           p={{ base: '52px 24px', md: '68px 48px' }}
           borderRadius="24px"
@@ -22,7 +62,6 @@ export function Download() {
           border="1px solid rgba(255, 255, 255, 0.08)"
           position="relative"
           overflow="hidden"
-          transition="border-color 0.25s, transform 0.25s, box-shadow 0.25s"
           style={{ backdropFilter: 'blur(20px) saturate(180%)', WebkitBackdropFilter: 'blur(20px) saturate(180%)' }}
           _before={{
             content: '""',
@@ -38,28 +77,21 @@ export function Download() {
             content: '""',
             position: 'absolute',
             inset: 0,
-            background: 'radial-gradient(ellipse at 50% -10%, rgba(66, 135, 245, 0.09) 0%, transparent 58%)',
+            background: 'radial-gradient(ellipse at 50% -10%, rgba(66, 135, 245, 0.1) 0%, transparent 58%)',
             pointerEvents: 'none',
-          }}
-          _hover={{
-            borderColor: 'rgba(66, 135, 245, 0.30)',
-            transform: 'translateY(-3px)',
-            boxShadow: '0 16px 44px rgba(0, 0, 0, 0.28)',
           }}
         >
           <VStack position="relative" zIndex={1} gap="12px">
-            <Text as="h2" fontSize="clamp(26px, 4vw, 40px)" fontWeight="700" lineHeight="1.1" letterSpacing="-0.02em">
-              Built for Mac.
-              <br />
-              Works offline.
+            <Text as="h2" color="white" fontSize="clamp(28px, 4vw, 42px)" fontWeight="700" lineHeight="1.1" letterSpacing="-0.02em">
+              Open your first context.
             </Text>
 
-            <Text color="fg.muted" fontSize="16px" mb="14px">
-              Free download. No account required.
+            <Text color="rgba(255,255,255,0.64)" fontSize="16px" mb="14px" maxW="420px">
+              Free download for Mac. It updates itself, and your agent can connect the same day.
             </Text>
 
             <Link
-              href="https://pub-bbfe77b031cf40df8b49f3dcd9f96d78.r2.dev/BlueKit_0.4.12_aarch64.dmg"
+              href={DMG_URL}
               display="inline-flex"
               alignItems="center"
               gap="9px"
@@ -83,8 +115,8 @@ export function Download() {
               <Text>Download for macOS</Text>
             </Link>
 
-            <Text mt="6px" color="text.tertiary" fontSize="13.5px">
-              macOS 12+ · Apple Silicon & Intel · ~15 MB
+            <Text mt="6px" color="rgba(255,255,255,0.45)" fontSize="13.5px" fontFamily="mono">
+              {VERSION ? `v${VERSION} · ` : ''}macOS · Apple Silicon
             </Text>
           </VStack>
         </Box>

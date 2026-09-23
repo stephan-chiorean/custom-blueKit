@@ -33,6 +33,9 @@ export const system = createSystem(defaultConfig, {
       colors: {
         ...themeColors,
       },
+      fonts: {
+        mono: { value: "'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace" },
+      },
       breakpoints: {
         sm: { value: '30em' },
         md: { value: '48em' },

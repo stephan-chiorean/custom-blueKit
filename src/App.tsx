@@ -1,10 +1,12 @@
 import { Box } from '@chakra-ui/react';
+import { Agents } from './components/Agents';
 import { Download } from './components/Download';
+import { Features } from './components/Features';
 import { Footer } from './components/Footer';
 import { Hero } from './components/Hero';
 import { HowItWorks } from './components/HowItWorks';
 import { Nav } from './components/Nav';
-import { VideoSection } from './components/VideoSection';
+import { Thesis } from './components/Thesis';
 
 export default function App() {
   return (
@@ -19,7 +21,9 @@ export default function App() {
 
       <Box as="main" position="relative" zIndex={1}>
         <Hero />
-        <VideoSection />
+        <Thesis />
+        <Features />
+        <Agents />
         <HowItWorks />
         <Download />
       </Box>

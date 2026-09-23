@@ -1,5 +1,6 @@
 import { Box, Container, HStack, Link, Text, VStack } from "@chakra-ui/react";
 import { Logo } from "./Logo";
+import { DMG_URL } from "../release";
 
 function AppleIcon() {
   return (
@@ -93,7 +94,7 @@ export function Hero() {
                 flexWrap="wrap"
               >
                 <Link
-                  href="https://pub-bbfe77b031cf40df8b49f3dcd9f96d78.r2.dev/BlueKit_0.4.12_aarch64.dmg"
+                  href={DMG_URL}
                   display="inline-flex"
                   alignItems="center"
                   justifyContent="center"
@@ -164,13 +165,14 @@ export function Hero() {
             position="relative"
           >
             <img
-              src="/hero-screenshot.png"
-              alt="BlueKit app interface"
+              src="/shots/workspace.webp"
+              alt="BlueKit workspace: a document, and its context's notes, inside the Onboarding Redesign context"
+              width={1728}
+              height={1084}
               style={{
                 width: "100%",
                 height: "auto",
                 display: "block",
-                marginTop: "-23px",
               }}
             />
             <Box
