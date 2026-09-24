@@ -50,7 +50,7 @@ function Contexts() {
         <Shot
           src="/shots/context-list.webp"
           alt="The context list: Onboarding Redesign, Churn Investigation, Apple Watch App, and more"
-          width={944}
+          width={938}
           height={830}
           display={{ base: 'none', md: 'block' }}
           position="absolute"
