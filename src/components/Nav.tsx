@@ -3,8 +3,8 @@ import catLogo from '../assets/cat.svg';
 
 const links = [
   { label: 'Why', href: '#why' },
-  { label: 'Contexts', href: '#contexts' },
   { label: 'Agents', href: '#agents' },
+  { label: 'Contexts', href: '#contexts' },
   { label: 'How it works', href: '#how' },
 ];
 

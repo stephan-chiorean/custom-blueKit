@@ -36,26 +36,27 @@ function Contexts() {
         </VStack>
       </VStack>
 
-      {/* Layered composition: the document behind, the notes panel in front */}
+      {/* Layered composition: the context's tasks behind, the context list in front */}
       <Box position="relative" className="reveal" style={{ transitionDelay: '0.1s' }} pb={{ base: '0', md: '64px' }}>
         <Shot
-          src="/shots/doc-view.webp"
-          alt="A document open inside a BlueKit context"
-          width={940}
-          height={1001}
-          w={{ base: '100%', md: '72%' }}
+          src="/shots/context-tasks.webp"
+          alt="Tasks inside a BlueKit context, grouped into Build and Ship lists"
+          width={1482}
+          height={1130}
+          w={{ base: '100%', md: '76%' }}
+          ml="auto"
           opacity={{ base: 1, md: 0.9 }}
         />
         <Shot
-          src="/shots/notes-panel.webp"
-          alt="Typed notes grouped into lists: open questions, research findings, decisions"
-          width={738}
-          height={1001}
+          src="/shots/context-list.webp"
+          alt="The context list: Onboarding Redesign, Churn Investigation, Apple Watch App, and more"
+          width={944}
+          height={830}
           display={{ base: 'none', md: 'block' }}
           position="absolute"
-          right="0"
+          left="0"
           top="64px"
-          w="56%"
+          w="50%"
           glow="rgba(167, 139, 250, 0.7)"
           boxShadow="0 40px 100px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04)"
         />

@@ -22,8 +22,8 @@ export default function App() {
       <Box as="main" position="relative" zIndex={1}>
         <Hero />
         <Thesis />
-        <Features />
         <Agents />
+        <Features />
         <HowItWorks />
         <Download />
       </Box>

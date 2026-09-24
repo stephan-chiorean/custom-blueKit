@@ -106,7 +106,7 @@ export function Agents() {
   const ref = useReveal<HTMLElement>();
 
   return (
-    <Box as="section" id="agents" ref={ref} py={{ base: '64px', md: '112px' }} scrollMarginTop="72px">
+    <Box as="section" id="agents" ref={ref} pt={{ base: '40px', md: '56px' }} pb={{ base: '64px', md: '112px' }} scrollMarginTop="72px">
       <Container maxW="1280px" px={{ base: '16px', md: '28px', lg: '36px' }}>
         <Grid
           templateColumns={{ base: '1fr', lg: 'minmax(0, 0.9fr) minmax(0, 1.1fr)' }}
