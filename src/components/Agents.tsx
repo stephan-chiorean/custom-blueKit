@@ -125,7 +125,7 @@ export function Agents() {
                 <b>One sentence to connect.</b> No setup per session, no pasting context into chat.
               </Point>
               <Point accent="#fcd34d">
-                <b>You stay the editor.</b> The agent only writes when you ask, and every change shows up in the app.
+                <b>You stay in control.</b> The agent only writes when you ask, and every change shows up in the app.
               </Point>
               <Point accent="#fcd34d">
                 <b>Several at once.</b> Open two contexts, or contexts from different projects, in the same session.
