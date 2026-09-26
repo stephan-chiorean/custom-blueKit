@@ -13,7 +13,10 @@ export function Footer() {
       gap="8px"
     >
       <Text color="rgba(255,255,255,0.42)" fontSize="13px" textAlign="center">
-        © 2026 BlueKit · Built for humans.
+        © 2026 BlueKit · Built for humans. ·{' '}
+        <a href="/privacy" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+          Privacy
+        </a>
       </Text>
     </VStack>
   );

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Privacy Policy — BlueKit</title>
+<meta name="description" content="What BlueKit collects, what stays on your machine, and how to opt out or delete your data." />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<style>
+  :root {
+    --bg: #050d1f;
+    --panel: rgba(255, 255, 255, 0.03);
+    --line: rgba(255, 255, 255, 0.08);
+    --fg: #e6ebf5;
+    --fg-dim: rgba(230, 235, 245, 0.68);
+    --fg-faint: rgba(230, 235, 245, 0.45);
+    --accent: #4287f5;
+    --accent-soft: #93c5fd;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.7 -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -20% -10% auto;
+    height: 60vh;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 0%, rgba(66, 135, 245, 0.12), transparent 65%);
+  }
+  main { position: relative; max-width: 720px; margin: 0 auto; padding: 56px 24px 96px; }
+  a { color: var(--accent-soft); text-underline-offset: 3px; }
+  a:hover { color: #fff; }
+  .home { display: inline-block; font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: var(--fg); text-decoration: none; }
+  .home b { color: var(--accent); }
+  h1 { font-size: clamp(30px, 5vw, 40px); letter-spacing: -0.02em; line-height: 1.15; margin: 48px 0 8px; }
+  .updated { color: var(--fg-faint); font-size: 14px; margin: 0 0 32px; }
+  h2 { font-size: 20px; letter-spacing: -0.01em; margin: 44px 0 10px; }
+  p, li { color: var(--fg-dim); }
+  strong { color: var(--fg); font-weight: 600; }
+  ul { padding-left: 1.2em; }
+  li { margin: 6px 0; }
+  .summary { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; }
+  .summary p { margin: 6px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; margin: 12px 0; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  th { color: var(--fg-faint); font-weight: 500; font-size: 13px; }
+  td { color: var(--fg-dim); }
+  td:first-child { color: var(--fg); white-space: nowrap; }
+  .scroll { overflow-x: auto; }
+  code { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; color: var(--fg); }
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--fg-faint); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="home" href="/"><b>blue</b>Kit</a>
+
+  <h1>Privacy Policy</h1>
+  <p class="updated">Effective September 26, 2026</p>
+
+  <div class="summary">
+    <p><strong>The short version.</strong> BlueKit is a local-first desktop app. Your notebooks, contexts, notes, tasks and documents are stored on your computer and are never sent to us. They only leave your machine if you send them somewhere yourself, for example by pushing your notebook to a git remote.</p>
+    <p>BlueKit sends one anonymous usage ping per day you use it, so we can count active users. It contains counts, never your content, and you can turn it off. Signing in with Google is optional.</p>
+  </div>
+
+  <h2>Who we are</h2>
+  <p>BlueKit is made by Stephan Chiorean ("we", "us"). Questions or requests about your data: <a href="mailto:stephan.chiorean@gmail.com">stephan.chiorean@gmail.com</a>.</p>
+
+  <h2>What we never receive</h2>
+  <p>Everything you create in BlueKit is stored on your machine, and none of it is ever sent to us:</p>
+  <ul>
+    <li>the Markdown files in your projects' <code>.bluekit/</code> folders</li>
+    <li>contexts, notes, tasks, groups, markers and clips (a local database at <code>~/.bluekit/</code>)</li>
+    <li>project names, folder paths, and file contents</li>
+    <li>any API keys you save for AI agents</li>
+  </ul>
+  <p>It leaves your computer only when you choose to send it somewhere:</p>
+  <ul>
+    <li><strong>Git.</strong> Your notebook folders are ordinary git repositories. If you've set up a remote, such as GitHub, committing from BlueKit pushes your notebook there, and it's then held by that provider under its terms. Without a remote you've set up, nothing is pushed.</li>
+    <li><strong>Workspace export.</strong> Exporting your workspace writes a file wherever you choose; what happens to it next is up to you.</li>
+    <li><strong>AI agents you connect.</strong> See section 5 below.</li>
+  </ul>
+
+  <h2>What BlueKit sends, and why</h2>
+
+  <p><strong>1. Anonymous daily usage ping (on by default, can be turned off).</strong> On each day you open BlueKit, the app sends:</p>
+  <div class="scroll">
+    <table>
+      <tr><th>Field</th><th>Example</th><th>Why</th></tr>
+      <tr><td>Install ID</td><td>a random identifier created on your machine</td><td>to count distinct installs without knowing who you are</td></tr>
+      <tr><td>Date</td><td>2026-09-26</td><td>to count active days</td></tr>
+      <tr><td>App version</td><td>0.6.0</td><td>to know which versions are in use</td></tr>
+      <tr><td>Platform</td><td>macos</td><td>to know which operating systems to support</td></tr>
+      <tr><td>Number of contexts</td><td>7</td><td>a count only, to see whether people get started</td></tr>
+      <tr><td>Agent skill installed</td><td>yes / no</td><td>to see whether the agent integration helps people keep using BlueKit</td></tr>
+    </table>
+  </div>
+  <p>We use this only to measure how many people use BlueKit and whether they keep using it. It never contains names of projects, contexts, files, or anything you've written.</p>
+  <p>To turn it off, go to <strong>Settings → Account → Share anonymous usage</strong>. From then on nothing is sent, and your account is not linked to your install.</p>
+
+  <p><strong>2. Your account, if you choose to sign in.</strong> Signing in is optional; the app works fully without it. If you sign in with Google, we receive your <strong>name, email address, profile photo</strong>, and Google account identifier.</p>
+  <p>We use them to identify your account and to show your name and photo in the app. When you sign in (with the usage ping on), your install is linked to your account, so we count you once even if you used BlueKit before signing in or use it on more than one computer.</p>
+
+  <p><strong>3. Update checks.</strong> BlueKit checks for new versions by downloading a small file from our update server, like any web request. It sends nothing about you.</p>
+
+  <p><strong>4. Downloads from this website.</strong> When you download BlueKit, we record the time, the app version, the country (derived by our CDN from your connection), and the page that linked you. We don't store your IP address, and downloads aren't linked to installs or accounts. This website uses no analytics or advertising cookies.</p>
+
+  <p><strong>5. AI agents you connect yourself.</strong> If you connect BlueKit to an AI agent or model provider using your own account or API key, that data goes directly from your computer to that provider under their terms. It doesn't pass through us.</p>
+
+  <h2>Google user data</h2>
+  <p>When you sign in with Google, BlueKit requests only the basic <code>openid</code>, <code>email</code> and <code>profile</code> scopes. We use this data only to create and identify your BlueKit account and to display your name and photo in the app.</p>
+  <p>We don't sell it, use it for advertising, share it with third parties except the service providers below that run sign-in, or use it to train AI models. BlueKit's use of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+  <h2>Service providers</h2>
+  <p>We use these providers to run BlueKit. They process data only on our behalf:</p>
+  <ul>
+    <li><strong>Supabase:</strong> account sign-in and the database that stores usage pings and accounts (United States).</li>
+    <li><strong>Google:</strong> "Sign in with Google".</li>
+    <li><strong>Cloudflare:</strong> app downloads, update checks, and download counting.</li>
+    <li><strong>Vercel:</strong> hosting for this website.</li>
+  </ul>
+  <p>We don't sell or rent personal information, and we don't share it for advertising.</p>
+
+  <h2>How long we keep it</h2>
+  <p>Usage pings and account information are kept for as long as we need them to understand product usage and run your account. You can ask us to delete them at any time.</p>
+
+  <h2>Your choices and rights</h2>
+  <ul>
+    <li><strong>Turn off the usage ping</strong> in Settings → Account.</li>
+    <li><strong>Sign out</strong> any time from the account button in BlueKit or from Settings → Account.</li>
+    <li><strong>Access or delete your data:</strong> email <a href="mailto:stephan.chiorean@gmail.com">stephan.chiorean@gmail.com</a> and we'll send you what we hold, or delete your account, usage history and install records.</li>
+    <li><strong>Revoke Google access</strong> at any time from your <a href="https://myaccount.google.com/permissions">Google Account permissions</a>.</li>
+  </ul>
+  <p>Depending on where you live (for example under the GDPR or CCPA), you may have further rights, such as correcting your data or objecting to its use. Email us and we'll help.</p>
+
+  <h2>Security</h2>
+  <p>Data sent to us travels over encrypted connections (HTTPS). The usage database accepts only the two narrow write operations the app needs, and is readable only by us. Your sign-in session is stored on your computer.</p>
+
+  <h2>Children</h2>
+  <p>BlueKit is not directed at children under 13, and we don't knowingly collect their information. If you think a child has given us personal information, contact us and we'll delete it.</p>
+
+  <h2>Changes</h2>
+  <p>If this policy changes, we'll update the date at the top of this page. If the change is significant, for example if we start collecting something new, we'll also say so in the app.</p>
+
+  <footer>
+    © 2026 BlueKit · <a href="/">Home</a> · <a href="mailto:stephan.chiorean@gmail.com">Contact</a>
+  </footer>
+</main>
+</body>
+</html>
