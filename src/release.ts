@@ -2,4 +2,8 @@
 // BlueKit_*.dmg), so everything version-related derives from it.
 export const DMG_URL = 'https://pub-bbfe77b031cf40df8b49f3dcd9f96d78.r2.dev/BlueKit_0.5.2_aarch64.dmg';
 
+// Download buttons go through the bluekit-download Worker (counts the download,
+// then redirects to the latest DMG). vercel.json maps /download to the Worker.
+export const DOWNLOAD_URL = 'https://www.bluekit.md/download';
+
 export const VERSION = DMG_URL.match(/BlueKit_([\d.]+)_/)?.[1] ?? '';

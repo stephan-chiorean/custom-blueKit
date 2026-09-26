@@ -1,6 +1,6 @@
 import { Box, Container, HStack, Link, Text, VStack } from "@chakra-ui/react";
 import { Logo } from "./Logo";
-import { DMG_URL } from "../release";
+import { DOWNLOAD_URL } from "../release";
 
 function AppleIcon() {
   return (
@@ -94,7 +94,7 @@ export function Hero() {
                 flexWrap="wrap"
               >
                 <Link
-                  href={DMG_URL}
+                  href={DOWNLOAD_URL}
                   display="inline-flex"
                   alignItems="center"
                   justifyContent="center"

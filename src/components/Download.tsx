@@ -1,6 +1,6 @@
 import { Box, Container, Grid, Link, Text, VStack } from '@chakra-ui/react';
 import { useReveal } from '../hooks/useReveal';
-import { DMG_URL, VERSION } from '../release';
+import { DOWNLOAD_URL, VERSION } from '../release';
 
 
 function AppleIcon() {
@@ -91,7 +91,7 @@ export function Download() {
             </Text>
 
             <Link
-              href={DMG_URL}
+              href={DOWNLOAD_URL}
               display="inline-flex"
               alignItems="center"
               gap="9px"

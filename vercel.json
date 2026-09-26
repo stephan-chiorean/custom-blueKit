@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/download",
+      "destination": "https://bluekit-download.bluekit.workers.dev/download",
+      "permanent": false
+    }
+  ]
+}
