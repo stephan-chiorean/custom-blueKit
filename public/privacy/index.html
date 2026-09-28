@@ -63,11 +63,11 @@
   <a class="home" href="/"><b>blue</b>Kit</a>
 
   <h1>Privacy Policy</h1>
-  <p class="updated">Effective September 26, 2026</p>
+  <p class="updated">Effective September 27, 2026</p>
 
   <div class="summary">
     <p><strong>The short version.</strong> BlueKit is a local-first desktop app. Your notebooks, contexts, notes, tasks and documents are stored on your computer and are never sent to us. They only leave your machine if you send them somewhere yourself, for example by pushing your notebook to a git remote.</p>
-    <p>BlueKit sends one anonymous usage ping per day you use it, so we can count active users. It contains counts, never your content, and you can turn it off. Signing in with Google is optional.</p>
+    <p>BlueKit sends one anonymous usage ping per day you use it, so we can count active users. It contains counts, never your content, and you can turn it off. Signing in with Google is optional. If you're signed in and send us feedback from the app, we receive what you wrote, with your email so we can reply.</p>
   </div>
 
   <h2>Who we are</h2>
@@ -85,7 +85,8 @@
   <ul>
     <li><strong>Git.</strong> Your notebook folders are ordinary git repositories. If you've set up a remote, such as GitHub, committing from BlueKit pushes your notebook there, and it's then held by that provider under its terms. Without a remote you've set up, nothing is pushed.</li>
     <li><strong>Workspace export.</strong> Exporting your workspace writes a file wherever you choose; what happens to it next is up to you.</li>
-    <li><strong>AI agents you connect.</strong> See section 5 below.</li>
+    <li><strong>Feedback you send.</strong> Only the text you type into the feedback box. See section 3 below.</li>
+    <li><strong>AI agents you connect.</strong> See section 6 below.</li>
   </ul>
 
   <h2>What BlueKit sends, and why</h2>
@@ -108,11 +109,24 @@
   <p><strong>2. Your account, if you choose to sign in.</strong> Signing in is optional; the app works fully without it. If you sign in with Google, we receive your <strong>name, email address, profile photo</strong>, and Google account identifier.</p>
   <p>We use them to identify your account and to show your name and photo in the app. When you sign in (with the usage ping on), your install is linked to your account, so we count you once even if you used BlueKit before signing in or use it on more than one computer.</p>
 
-  <p><strong>3. Update checks.</strong> BlueKit checks for new versions by downloading a small file from our update server, like any web request. It sends nothing about you.</p>
+  <p><strong>3. Feedback you send.</strong> If you're signed in, you can send us feedback from the account button in BlueKit. Nothing is sent unless you write something and press Send. When you do, we store:</p>
+  <div class="scroll">
+    <table>
+      <tr><th>Field</th><th>Example</th><th>Why</th></tr>
+      <tr><td>What you wrote</td><td>the text, plus a title if you gave one</td><td>so we can read it</td></tr>
+      <tr><td>Type, if you picked one</td><td>bug, request, advice, question, praise</td><td>to sort it</td></tr>
+      <tr><td>Your account</td><td>your email address and account identifier, taken from your sign-in</td><td>so we know who it's from and can reply</td></tr>
+      <tr><td>App version and platform</td><td>0.6.0, macos</td><td>to reproduce bugs</td></tr>
+      <tr><td>Time sent</td><td>2026-09-27 14:02</td><td>to read it in order</td></tr>
+    </table>
+  </div>
+  <p>Nothing else is attached: no files, notes, screenshots or other content from your notebooks. Feedback is stored in our Supabase database and only we can read it. We use it to improve BlueKit and to reply to you, usually by email. We never publish it or share it with anyone else. Deleting your account deletes everything you've sent.</p>
 
-  <p><strong>4. Downloads from this website.</strong> When you download BlueKit, we record the time, the app version, the country (derived by our CDN from your connection), and the page that linked you. We don't store your IP address, and downloads aren't linked to installs or accounts. This website uses no analytics or advertising cookies.</p>
+  <p><strong>4. Update checks.</strong> BlueKit checks for new versions by downloading a small file from our update server, like any web request. It sends nothing about you.</p>
 
-  <p><strong>5. AI agents you connect yourself.</strong> If you connect BlueKit to an AI agent or model provider using your own account or API key, that data goes directly from your computer to that provider under their terms. It doesn't pass through us.</p>
+  <p><strong>5. Downloads from this website.</strong> When you download BlueKit, we record the time, the app version, the country (derived by our CDN from your connection), and the page that linked you. We don't store your IP address, and downloads aren't linked to installs or accounts. This website uses no analytics or advertising cookies.</p>
+
+  <p><strong>6. AI agents you connect yourself.</strong> If you connect BlueKit to an AI agent or model provider using your own account or API key, that data goes directly from your computer to that provider under their terms. It doesn't pass through us.</p>
 
   <h2>Google user data</h2>
   <p>When you sign in with Google, BlueKit requests only the basic <code>openid</code>, <code>email</code> and <code>profile</code> scopes. We use this data only to create and identify your BlueKit account and to display your name and photo in the app.</p>
@@ -121,7 +135,7 @@
   <h2>Service providers</h2>
   <p>We use these providers to run BlueKit. They process data only on our behalf:</p>
   <ul>
-    <li><strong>Supabase:</strong> account sign-in and the database that stores usage pings and accounts (United States).</li>
+    <li><strong>Supabase:</strong> account sign-in and the database that stores usage pings, accounts and feedback (United States).</li>
     <li><strong>Google:</strong> "Sign in with Google".</li>
     <li><strong>Cloudflare:</strong> app downloads, update checks, and download counting.</li>
     <li><strong>Vercel:</strong> hosting for this website.</li>
@@ -129,19 +143,19 @@
   <p>We don't sell or rent personal information, and we don't share it for advertising.</p>
 
   <h2>How long we keep it</h2>
-  <p>Usage pings and account information are kept for as long as we need them to understand product usage and run your account. You can ask us to delete them at any time.</p>
+  <p>Usage pings and account information are kept for as long as we need them to understand product usage and run your account. Feedback is kept until you ask us to delete it or delete your account. You can ask us to delete any of it at any time.</p>
 
   <h2>Your choices and rights</h2>
   <ul>
     <li><strong>Turn off the usage ping</strong> in Settings → Account.</li>
     <li><strong>Sign out</strong> any time from the account button in BlueKit or from Settings → Account.</li>
-    <li><strong>Access or delete your data:</strong> email <a href="mailto:stephan.chiorean@gmail.com">stephan.chiorean@gmail.com</a> and we'll send you what we hold, or delete your account, usage history and install records.</li>
+    <li><strong>Access or delete your data:</strong> email <a href="mailto:stephan.chiorean@gmail.com">stephan.chiorean@gmail.com</a> and we'll send you what we hold, or delete your account, usage history, install records and feedback.</li>
     <li><strong>Revoke Google access</strong> at any time from your <a href="https://myaccount.google.com/permissions">Google Account permissions</a>.</li>
   </ul>
   <p>Depending on where you live (for example under the GDPR or CCPA), you may have further rights, such as correcting your data or objecting to its use. Email us and we'll help.</p>
 
   <h2>Security</h2>
-  <p>Data sent to us travels over encrypted connections (HTTPS). The usage database accepts only the two narrow write operations the app needs, and is readable only by us. Your sign-in session is stored on your computer.</p>
+  <p>Data sent to us travels over encrypted connections (HTTPS). The database accepts only the few narrow write operations the app needs (the usage ping, linking an install to your account, and sending feedback), and is readable only by us. Your sign-in session is stored on your computer.</p>
 
   <h2>Children</h2>
   <p>BlueKit is not directed at children under 13, and we don't knowingly collect their information. If you think a child has given us personal information, contact us and we'll delete it.</p>
