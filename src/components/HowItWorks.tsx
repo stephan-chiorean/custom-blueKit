@@ -12,9 +12,18 @@ type Step = {
 const steps: Step[] = [
   {
     number: '01',
-    title: 'Create a notebook',
-    description:
-      'A notebook is a folder of plain markdown for one stream of work. Link the repos it spans, and open them straight from the notebook.',
+    title: 'Install the skill',
+    description: 'One click in the app. From then on, your agent works alongside you.',
+    icon: (
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 17l6-5-6-5M12 19h8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    number: '02',
+    title: 'Create your notebook',
+    description: 'One home for a stream of work, and the repos it spans.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path
@@ -27,10 +36,9 @@ const steps: Step[] = [
     ),
   },
   {
-    number: '02',
-    title: 'Start a context',
-    description:
-      'Name a piece of work and pick its kind. Link the docs that matter, and add notes and tasks as you go. Group related contexts to see how the work connects.',
+    number: '03',
+    title: 'Build your contexts',
+    description: 'Docs, notes and tasks for each piece of work. Your agent connects by name and builds with you.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <rect x="5" y="3.5" width="14" height="17" rx="2" stroke="currentColor" strokeWidth="1.7" />
@@ -39,37 +47,9 @@ const steps: Step[] = [
     ),
   },
   {
-    number: '03',
-    title: 'Connect your agent',
-    description: (
-      <>
-        Install the BlueKit skill once from the app. Then, from any repo in Claude Code, Codex, or Cursor, say{' '}
-        <Text
-          as="code"
-          fontFamily="mono"
-          fontSize="12px"
-          color="primary.300"
-          bg="rgba(66, 135, 245, 0.1)"
-          px="6px"
-          py="2px"
-          borderRadius="4px"
-        >
-          /bluekit connect to the auth context in the Acme notebook
-        </Text>
-        . It reads the context before it starts, and adds notes and tasks when you ask.
-      </>
-    ),
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M4 17l6-5-6-5M12 19h8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-  {
     number: '04',
-    title: 'Close it out',
-    description:
-      'When the work is done, complete the context. It leaves your tabs, and everything in it stays in the notebook.',
+    title: 'Close them out',
+    description: 'Complete a context when the work is done. It all stays in your notebook.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.7" />
@@ -97,10 +77,10 @@ export function HowItWorks() {
             How it works
           </Text>
           <Text as="h2" color="white" fontSize={{ base: '32px', md: '42px', lg: '48px' }} fontWeight="700" lineHeight="1.06" letterSpacing="-0.025em">
-            Four steps to your first <Box as="span" color="primary.500">context</Box>.
+            Four steps, with your <Box as="span" color="primary.500">agent</Box> alongside.
           </Text>
           <Text color="rgba(255,255,255,0.66)" fontSize={{ base: '16px', md: '17px' }}>
-            No account needed. The first step takes a minute.
+            Install the skill and your agent helps with everything after it.
           </Text>
         </VStack>
 
