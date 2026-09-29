@@ -31,19 +31,6 @@ export function Thesis() {
           </Box>
         </Text>
 
-        <Text
-          className="reveal"
-          mt={{ base: '22px', md: '28px' }}
-          color="rgba(255,255,255,0.66)"
-          fontSize={{ base: '17px', md: '19px' }}
-          lineHeight="1.65"
-          maxW="720px"
-          style={{ transitionDelay: '0.12s' }}
-        >
-          Agents write the code, run the tests, and draft the docs. What they can't do is hold the thread
-          for you. When the work moves faster than you can follow it, your understanding becomes the
-          bottleneck. BlueKit is where you keep it.
-        </Text>
       </Container>
     </Box>
   );

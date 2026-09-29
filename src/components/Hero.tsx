@@ -1,6 +1,16 @@
 import { Box, Container, HStack, Link, Text, VStack } from "@chakra-ui/react";
 import { Logo } from "./Logo";
 import { DOWNLOAD_URL } from "../release";
+import { WorkspaceDemo } from "./demo/WorkspaceDemo";
+import { DemoHint } from "./demo/kit";
+import { LuLayers, LuPackageCheck, LuRoute, LuWrench } from "react-icons/lu";
+
+const HIGHLIGHTS = [
+  { label: "Organize by context", Icon: LuLayers },
+  { label: "Trace your understanding", Icon: LuRoute },
+  { label: "Built-in tooling", Icon: LuWrench },
+  { label: "No plugin hell", Icon: LuPackageCheck },
+];
 
 function AppleIcon() {
   return (
@@ -149,80 +159,51 @@ export function Hero() {
             </Box>
           </HStack>
 
-          <Box
-            className="hero-reveal"
-            style={{
-              animationDelay: "0.26s",
-              backdropFilter: "blur(10px)",
-              WebkitBackdropFilter: "blur(10px)",
-            }}
-            maxW="100%"
-            borderRadius={{ base: "18px", md: "24px" }}
-            overflow="hidden"
-            border="1px solid rgba(255, 255, 255, 0.09)"
-            bg="rgba(255,255,255,0.03)"
-            boxShadow="0 30px 90px rgba(0,0,0,0.45)"
-            position="relative"
-          >
-            <img
-              src="/shots/workspace.webp"
-              alt="BlueKit workspace: a document, and its context's notes, inside the Onboarding Redesign context"
-              width={1728}
-              height={1084}
-              style={{
-                width: "100%",
-                height: "auto",
-                display: "block",
-              }}
-            />
-            <Box
-              position="absolute"
-              inset={0}
-              pointerEvents="none"
-              background="linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0) 24%, rgba(0,0,0,0.22) 100%)"
-            />
+          <Box className="hero-reveal" style={{ animationDelay: "0.26s" }}>
+            <WorkspaceDemo />
+            <DemoHint>It's live: switch contexts, open docs, move tasks along.</DemoHint>
           </Box>
 
           <Box
+            as="ul"
             className="hero-reveal"
-            style={{ animationDelay: "0.32s" }}
-            display="flex"
-            flexWrap="wrap"
-            justifyContent="center"
-            gap={{ base: "8px", md: "10px" }}
+            style={{ animationDelay: "0.32s", listStyle: "none" }}
+            m="0"
+            p="0"
+            mt={{ base: "10px", md: "18px" }}
+            display="grid"
+            gridTemplateColumns={{ base: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" }}
+            borderTop="1px solid rgba(255, 255, 255, 0.08)"
+            borderBottom="1px solid rgba(255, 255, 255, 0.08)"
           >
-            {[
-              "Organize by context",
-              "Trace your understanding",
-              "Built-in tooling",
-              "No plugin hell",
-            ].map((item) => (
+            {HIGHLIGHTS.map(({ label, Icon }, i) => (
               <Box
-                key={item}
-                display="inline-flex"
+                as="li"
+                key={label}
+                display="flex"
                 alignItems="center"
-                gap="8px"
-                px={{ base: "14px", md: "16px" }}
-                py={{ base: "7px", md: "8px" }}
-                borderRadius="full"
-                border="1px solid rgba(66, 135, 245, 0.2)"
-                bg="rgba(66, 135, 245, 0.06)"
+                justifyContent={{ base: "flex-start", md: "center" }}
+                gap="10px"
+                py={{ base: "16px", md: "20px" }}
+                px={{ base: "4px", md: "16px" }}
+                borderLeft={{
+                  base: i % 2 === 1 ? "1px solid rgba(255, 255, 255, 0.08)" : "none",
+                  md: i > 0 ? "1px solid rgba(255, 255, 255, 0.08)" : "none",
+                }}
+                pl={{ base: i % 2 === 1 ? "16px" : "4px", md: "16px" }}
+                borderTop={{ base: i > 1 ? "1px solid rgba(255, 255, 255, 0.08)" : "none", md: "none" }}
               >
-                <Box
-                  w="5px"
-                  h="5px"
-                  borderRadius="full"
-                  bg="primary.400"
-                  flexShrink={0}
-                  style={{ boxShadow: "0 0 6px rgba(66, 135, 245, 0.8)" }}
-                />
+                <Box as="span" color="primary.300" flexShrink={0} display="flex" opacity={0.9}>
+                  <Icon size={17} strokeWidth={1.75} aria-hidden="true" />
+                </Box>
                 <Text
-                  color="rgba(255,255,255,0.65)"
-                  fontSize={{ base: "13px", md: "14px" }}
+                  color="rgba(255,255,255,0.78)"
+                  fontSize={{ base: "14px", md: "15px" }}
                   fontWeight="500"
-                  letterSpacing="0.01em"
+                  letterSpacing="-0.005em"
+                  lineHeight="1.3"
                 >
-                  {item}
+                  {label}
                 </Text>
               </Box>
             ))}
