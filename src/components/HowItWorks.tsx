@@ -12,9 +12,9 @@ type Step = {
 const steps: Step[] = [
   {
     number: '01',
-    title: 'Open a project',
+    title: 'Create a notebook',
     description:
-      'Point BlueKit at any folder. It keeps a notebook of plain markdown inside it, so the thinking lives next to the code.',
+      'A notebook is a folder of plain markdown for one stream of work. Link the repos it spans, and open them straight from the notebook.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <path
@@ -30,7 +30,7 @@ const steps: Step[] = [
     number: '02',
     title: 'Start a context',
     description:
-      'Name the thread of work and pick its kind. Link the docs that matter, and add notes and tasks as you go.',
+      'Name a piece of work and pick its kind. Link the docs that matter, and add notes and tasks as you go. Group related contexts to see how the work connects.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <rect x="5" y="3.5" width="14" height="17" rx="2" stroke="currentColor" strokeWidth="1.7" />
@@ -40,10 +40,10 @@ const steps: Step[] = [
   },
   {
     number: '03',
-    title: 'Bring your agent in',
+    title: 'Connect your agent',
     description: (
       <>
-        In Claude Code, Codex, or Cursor, say{' '}
+        Install the BlueKit skill once from the app. Then, from any repo in Claude Code, Codex, or Cursor, say{' '}
         <Text
           as="code"
           fontFamily="mono"
@@ -54,9 +54,9 @@ const steps: Step[] = [
           py="2px"
           borderRadius="4px"
         >
-          connect to the auth context
+          /bluekit connect to the auth context in the Acme notebook
         </Text>
-        . The agent picks up where you are and writes back what it does.
+        . It reads the context before it starts, and adds notes and tasks when you ask.
       </>
     ),
     icon: (
@@ -69,7 +69,7 @@ const steps: Step[] = [
     number: '04',
     title: 'Close it out',
     description:
-      'When the work is done, complete the context with a short retro. It leaves your tabs, and the record of what happened stays.',
+      'When the work is done, complete the context. It leaves your tabs, and everything in it stays in the notebook.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.7" />
@@ -97,10 +97,10 @@ export function HowItWorks() {
             How it works
           </Text>
           <Text as="h2" color="white" fontSize={{ base: '32px', md: '42px', lg: '48px' }} fontWeight="700" lineHeight="1.06" letterSpacing="-0.025em">
-            From question to <Box as="span" color="primary.500">done</Box>.
+            Four steps to your first <Box as="span" color="primary.500">context</Box>.
           </Text>
           <Text color="rgba(255,255,255,0.66)" fontSize={{ base: '16px', md: '17px' }}>
-            No setup, no account. Four steps, and the first one takes a minute.
+            No account needed. The first step takes a minute.
           </Text>
         </VStack>
 

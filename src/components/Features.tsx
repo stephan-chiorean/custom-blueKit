@@ -20,7 +20,7 @@ function Contexts() {
         />
         <VStack align="start" gap="12px">
           <Point>
-            <b>Docs are linked, never copied.</b> They stay plain markdown in your project, and one doc can live in
+            <b>Docs are linked, never copied.</b> They stay plain markdown in your notebook, and one doc can live in
             several contexts.
           </Point>
           <Point>
@@ -138,7 +138,7 @@ function ContextMap() {
           accent="#c084fc"
           align="center"
           title="See how the work connects."
-          body="Contexts join groups, and the map draws the whole project at once: what's active, what's done, and what grew out of what."
+          body="Contexts join groups, and the map draws the whole notebook at once: what's active, what's done, and what grew out of what."
         />
       </Box>
 

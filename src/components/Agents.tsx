@@ -8,9 +8,9 @@ type Line =
   | { kind: 'out'; text: string; tone?: 'dim' | 'blue' | 'green' | 'violet' | 'amber' };
 
 const session: Line[] = [
-  { kind: 'you', text: 'connect to the onboarding redesign context' },
+  { kind: 'you', text: '/bluekit connect to the onboarding redesign context in the Cadence notebook' },
   { kind: 'agent', text: 'BlueKit connected context: Onboarding Redesign' },
-  { kind: 'out', text: 'Project: Cadence · Kind: build', tone: 'dim' },
+  { kind: 'out', text: 'Notebook: Cadence · Kind: build', tone: 'dim' },
   { kind: 'out', text: 'Docs 4 · Notes 9 · Tasks 10', tone: 'dim' },
   { kind: 'out', text: '[urgent] Fix referral attribution for anonymous runs', tone: 'amber' },
   { kind: 'out', text: '[flag] Anonymous-first can break referral attribution', tone: 'violet' },
@@ -44,7 +44,7 @@ function Terminal() {
           <Box key={c} w="11px" h="11px" borderRadius="full" style={{ background: c, opacity: 0.85 }} />
         ))}
         <Text ml="10px" fontFamily="mono" fontSize="12px" color="rgba(255,255,255,0.45)">
-          ~/projects/cadence — your agent
+          ~/code/cadence-app — your agent
         </Text>
       </HStack>
 
@@ -128,7 +128,7 @@ export function Agents() {
                 <b>You stay in control.</b> The agent only writes when you ask, and every change shows up in the app.
               </Point>
               <Point accent="#fcd34d">
-                <b>Several at once.</b> Open two contexts, or contexts from different projects, in the same session.
+                <b>Several at once.</b> Open two contexts, or contexts from different notebooks, in the same session.
               </Point>
             </VStack>
             <HStack gap="8px" flexWrap="wrap">

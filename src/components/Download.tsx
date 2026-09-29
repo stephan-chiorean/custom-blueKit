@@ -18,7 +18,7 @@ const principles = [
   },
   {
     title: 'Markdown you own',
-    text: 'Docs are plain files in your project, versioned with git and readable in any editor.',
+    text: 'Docs are plain files in your notebook, versioned with git and readable in any editor.',
   },
   {
     title: 'Free for individuals',
