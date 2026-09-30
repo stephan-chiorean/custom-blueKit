@@ -73,8 +73,7 @@ export function Hero() {
                 textAlign="left"
                 maxW="600px"
               >
-                The individual workspace for precise engineering and
-                understanding.
+                Keep track of your thinking while AI does the work.
               </Text>
 
               <Text
