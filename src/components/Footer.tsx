@@ -14,6 +14,10 @@ export function Footer() {
     >
       <Text color="rgba(255,255,255,0.42)" fontSize="13px" textAlign="center">
         © 2026 BlueKit · Built for humans. ·{' '}
+        <a href="/agent-guide" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+          Agent tips
+        </a>{' '}
+        ·{' '}
         <a href="/privacy" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
           Privacy
         </a>

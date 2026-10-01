@@ -55,7 +55,10 @@ export function Agents() {
               ))}
             </HStack>
             <Text fontSize="13.5px" color="rgba(255,255,255,0.5)" lineHeight="1.6" maxW="480px">
-              The BlueKit skill installs from inside the app with one click.
+              The BlueKit skill installs from inside the app with one click.{' '}
+              <a href="/agent-guide" style={{ color: 'rgba(255,255,255,0.82)', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+                See agent tips
+              </a>
             </Text>
           </VStack>
 

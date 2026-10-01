@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent Tips — BlueKit</title>
+<meta name="description" content="One week of work in a BlueKit context, told through what you say to your agent." />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<style>
+  :root {
+    --bg: #050d1f;
+    --panel: rgba(255, 255, 255, 0.03);
+    --line: rgba(255, 255, 255, 0.08);
+    --fg: #e6ebf5;
+    --fg-dim: rgba(230, 235, 245, 0.68);
+    --fg-faint: rgba(230, 235, 245, 0.45);
+    --accent: #4287f5;
+    --agent: #e879f9;
+    --agent-line: rgba(232, 121, 249, 0.28);
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: -20% -10% auto;
+    height: 60vh;
+    pointer-events: none;
+    /* Ellipses sized to the box so they fade out before its bottom edge. */
+    background: radial-gradient(ellipse 45% 100% at 62% 0%, rgba(232, 121, 249, 0.08), transparent),
+                radial-gradient(ellipse 55% 100% at 35% 0%, rgba(66, 135, 245, 0.11), transparent);
+  }
+  main { position: relative; max-width: 720px; margin: 0 auto; padding: 56px 24px 96px; }
+  a { color: #93c5fd; text-underline-offset: 3px; }
+  a:hover { color: #fff; }
+  .home { display: inline-block; font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: var(--fg); text-decoration: none; }
+  .home b { color: var(--accent); }
+  h1 { font-size: clamp(30px, 5vw, 40px); letter-spacing: -0.02em; line-height: 1.15; margin: 48px 0 10px; }
+  .lede { color: var(--fg-dim); margin: 0 0 48px; }
+
+  /* Timeline: a rail down the left, a dot per step, a day label per stretch. */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px;
+    background: linear-gradient(180deg, var(--agent-line), rgba(66, 135, 245, 0.35) 60%, transparent);
+  }
+  .day {
+    position: relative; margin: 40px 0 16px; font: 600 12px/1 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--agent);
+  }
+  .day:first-child { margin-top: 0; }
+  .day::before {
+    content: ''; position: absolute; left: -32px; top: -2px; width: 11px; height: 11px; border-radius: 50%;
+    background: var(--bg); border: 2px solid var(--agent);
+  }
+  .day span { color: var(--fg-faint); font-weight: 500; letter-spacing: 0.04em; text-transform: none; margin-left: 6px; }
+
+  .step { position: relative; margin: 0 0 28px; }
+  .step::before {
+    content: ''; position: absolute; left: -29px; top: 8px; width: 5px; height: 5px; border-radius: 50%; background: var(--fg-faint);
+  }
+  .what { margin: 0 0 10px; font-size: 13px; font-weight: 600; color: var(--fg-faint); }
+  /* One exchange: what you say, then the agent's reply. */
+  .msg { display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: baseline; margin: 0 0 8px; }
+  .who { font: 600 11px/1 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+  .msg p { margin: 0; padding: 10px 14px; border-radius: 12px; font-size: 15px; line-height: 1.55; }
+  .you .who { color: #93c5fd; }
+  .you p { color: var(--fg); background: rgba(66, 135, 245, 0.10); border: 1px solid rgba(66, 135, 245, 0.24); }
+  .agent .who { color: var(--agent); }
+  .agent p { color: var(--fg-dim); background: var(--panel); border: 1px solid var(--line); }
+  .agent code { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; color: var(--fg); }
+  @media (max-width: 520px) {
+    .msg { grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  .note { margin: 48px 0 0; color: var(--fg-faint); font-size: 14px; }
+  footer { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); color: var(--fg-faint); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <a class="home" href="/"><b>blue</b>Kit</a>
+
+  <h1>Agent tips</h1>
+  <p class="lede">Connect your agent to a context and just start talking to it. Here's one week of work on a Payouts feature, as a conversation with your agent.</p>
+
+  <div class="timeline">
+    <p class="day">Monday <span>in Claude Code</span></p>
+
+    <div class="step">
+      <p class="what">Connect</p>
+      <div class="msg you"><span class="who">You</span><p>Connect to the Payouts context in the Acme notebook.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Connected to Payouts in the Acme notebook. It's a build context with empty <code>context/</code>, <code>plan/</code> and <code>review/</code> folders, and no notes or tasks yet.</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Write docs</p>
+      <div class="msg you"><span class="who">You</span><p>Here's the Linear ticket. Write it up as a doc, then make an implementation plan from it.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Wrote the ticket to <code>context/payouts-ticket.md</code> and the plan to <code>plan/00-implementation-plan.md</code>.</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Add tasks</p>
+      <div class="msg you"><span class="who">You</span><p>Add tasks from the plan, put them in a Migration list, and mark the backfill urgent.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Added 5 tasks to a new Migration list. “Backfill payout history” is urgent.</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Work in a linked repo</p>
+      <div class="msg you"><span class="who">You</span><p>The webhook handler is in the api repo. Read it and check it against the plan.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Read it in api. Two gaps against the plan: failed payouts aren't recorded, and retries have no cap.</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Log notes</p>
+      <div class="msg you"><span class="who">You</span><p>Log a decision that we're capping retries at 5, and flag that the old webhook still retries forever.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Logged the decision “Cap payout retries at 5” and the flag “Old webhook retries forever”.</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Make a visual doc</p>
+      <div class="msg you"><span class="who">You</span><p>Make an HTML page comparing Stripe Connect and Wise on fees, countries and payout speed.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Made <code>plan/payout-providers.html</code>. It's in the Documents panel.</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Park something for later</p>
+      <div class="msg you"><span class="who">You</span><p>Add “clean up the old invoices table” to my general tasks. It's not part of Payouts.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Added it to your general tasks in the Acme notebook.</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Wrap up</p>
+      <div class="msg you"><span class="who">You</span><p>Before I stop: log what we decided today, close the tasks we finished, and add tasks for anything left over.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Logged one more decision, closed 3 tasks, and added 2 for what's left: the reporting page and the CSV export.</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Hand off</p>
+      <div class="msg you"><span class="who">You</span><p>Write a handoff doc so Codex can pick this up tomorrow.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Wrote <code>plan/01-handoff.md</code>: where it stands, what's decided, and what's next.</p></div>
+    </div>
+
+    <p class="day">Tuesday <span>in Codex</span></p>
+
+    <div class="step">
+      <p class="what">Catch up</p>
+      <div class="msg you"><span class="who">You</span><p>Connect to Payouts in the Acme notebook and catch me up from the handoff.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Connected. The webhook and retry cap are done. Next is the backfill, which is urgent, then reporting.</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Bring in another context</p>
+      <div class="msg you"><span class="who">You</span><p>Also connect to Billing, and tell me if any of its open tasks overlap with Payouts.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Connected to Billing too. One overlap: both have “Store the Stripe account ID on users”. Which context should keep it?</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Group related work</p>
+      <div class="msg you"><span class="who">You</span><p>Put Payouts and Billing in a Payments group, with a line on what each one covers.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Created the Payments group. Payouts: paying sellers. Billing: charging customers.</p></div>
+    </div>
+
+    <p class="day">Friday <span>shipped</span></p>
+
+    <div class="step">
+      <p class="what">Split off what's next</p>
+      <div class="msg you"><span class="who">You</span><p>Create a build context called Payout Reports, and add tasks there for the reporting work we pushed back.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Created Payout Reports with 2 tasks: the reporting page and the CSV export.</p></div>
+    </div>
+
+    <div class="step">
+      <p class="what">Close it out</p>
+      <div class="msg you"><span class="who">You</span><p>We're done. Complete Payouts with a short retro of what shipped and what's left.</p></div>
+      <div class="msg agent"><span class="who">Agent</span><p>Completed Payouts. It's off your tabs and still in your notebook.</p></div>
+    </div>
+
+  </div>
+
+  <p class="note">Your agent only writes to BlueKit when you ask it to. Everything it writes shows up in the app right away.</p>
+
+  <footer>
+    © 2026 BlueKit · <a href="/">Home</a> · <a href="/privacy">Privacy</a> · <a href="mailto:stephan.chiorean@gmail.com">Contact</a>
+  </footer>
+</main>
+</body>
+</html>
