@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Link, Text, VStack } from '@chakra-ui/react';
+import { Box, Container, Link, Text, VStack } from '@chakra-ui/react';
 import { useReveal } from '../hooks/useReveal';
 import { DOWNLOAD_URL, VERSION } from '../release';
 
@@ -11,46 +11,12 @@ function AppleIcon() {
   );
 }
 
-const principles = [
-  {
-    title: 'On your machine',
-    text: 'Contexts, notes, and tasks live in a local database. No account, no cloud, nothing leaves your laptop.',
-  },
-  {
-    title: 'Markdown you own',
-    text: 'Docs are plain files in your notebook, versioned with git and readable in any editor.',
-  },
-  {
-    title: 'Free for individuals',
-    text: 'The whole app, for one person, at no cost. That’s not a trial.',
-  },
-];
-
 export function Download() {
   const ref = useReveal<HTMLElement>();
 
   return (
     <Box as="section" id="download" ref={ref} pt={{ base: '48px', md: '72px' }} pb={{ base: '80px', md: '128px' }}>
       <Container maxW="1280px" px={{ base: '16px', md: '28px', lg: '36px' }}>
-        <Grid
-          templateColumns={{ base: '1fr', md: 'repeat(3, 1fr)' }}
-          gap={{ base: '24px', md: '36px' }}
-          mb={{ base: '64px', md: '96px' }}
-          pt={{ base: '40px', md: '56px' }}
-          borderTop="1px solid rgba(255,255,255,0.07)"
-        >
-          {principles.map((p, i) => (
-            <Box key={p.title} className="reveal" style={{ transitionDelay: `${i * 0.08}s` }}>
-              <Text color="white" fontSize="17px" fontWeight="600">
-                {p.title}
-              </Text>
-              <Text mt="8px" color="rgba(255,255,255,0.6)" fontSize="15px" lineHeight="1.65">
-                {p.text}
-              </Text>
-            </Box>
-          ))}
-        </Grid>
-
         <Box
           className="reveal"
           maxW="640px"

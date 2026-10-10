@@ -7,46 +7,61 @@ export const AGENT_ACCENT = '#e879f9';
 const BLUEKIT_BLUE = '#60a5fa';
 
 type Line = { text: string; tone?: 'dim' | 'write' | 'ask' };
-type Step = { kind: 'you'; text: string } | { kind: 'agent'; lead: string; lines?: Line[] };
+/**
+ * `phase` is the loop step a line belongs to (0 create, 1 connect, 2 build,
+ * 3 close out), so the loop section can light up the step being played.
+ */
+type Step =
+  | { kind: 'you'; text: string; phase: number }
+  | { kind: 'agent'; lead: string; lines?: Line[]; phase: number }
+  | { kind: 'gap'; text: string; phase: number };
 
-/** A short session: connect, ask, log a decision, track tasks, update the plan. */
+/** One context's whole life: create it, connect, build it together, close it out. */
 const SCRIPT: Step[] = [
-  { kind: 'you', text: '/bluekit connect to the onboarding redesign context in the Cadence notebook' },
-  { kind: 'agent', lead: 'Connected to Onboarding redesign.', lines: [{ text: '3 docs · 9 notes · 4 open tasks', tone: 'dim' }] },
-  { kind: 'you', text: "what's still open on referrals?" },
+  { kind: 'you', phase: 0, text: '/bluekit create a build context for the referral rework in the Cadence notebook' },
   {
     kind: 'agent',
-    lead: 'One flag and one task:',
-    lines: [
-      { text: 'flag   Anonymous-first can break attribution', tone: 'dim' },
-      { text: 'task   Attach the referrer at sign-up', tone: 'dim' },
-    ],
+    phase: 0,
+    lead: 'Created Referral rework.',
+    lines: [{ text: '+ context/   plan/   review/', tone: 'write' }],
   },
-  { kind: 'you', text: "keep referral codes for 30 days. log that" },
-  { kind: 'agent', lead: 'Logged it.', lines: [{ text: '+ decision  Keep referral codes for 30 days', tone: 'write' }] },
-  { kind: 'you', text: 'track the rest as tasks' },
+  { kind: 'gap', phase: 1, text: 'next morning, new session' },
+  { kind: 'you', phase: 1, text: '/bluekit connect to referral rework' },
+  { kind: 'agent', phase: 1, lead: 'Connected to Referral rework.', lines: [{ text: '1 doc · 2 notes · 0 tasks', tone: 'dim' }] },
+  { kind: 'you', phase: 2, text: 'draft a plan from the ticket' },
+  { kind: 'agent', phase: 2, lead: 'Wrote the plan.', lines: [{ text: '+ plan/referral-plan.md', tone: 'write' }] },
+  { kind: 'you', phase: 2, text: 'keep referral codes for 30 days. log that' },
+  { kind: 'agent', phase: 2, lead: 'Logged it.', lines: [{ text: '+ decision  Keep referral codes for 30 days', tone: 'write' }] },
+  { kind: 'you', phase: 2, text: 'track the plan as tasks' },
   {
     kind: 'agent',
-    lead: 'Added 2 tasks to Onboarding redesign.',
+    phase: 2,
+    lead: 'Added 2 tasks.',
     lines: [
-      { text: '+ task  Backfill old referral codes', tone: 'write' },
+      { text: '+ task  Attach the referrer at sign-up', tone: 'write' },
       { text: '+ task  Add a referral expiry test', tone: 'write' },
     ],
   },
-  { kind: 'you', text: 'modify the implementation plan in the context accordingly' },
+  { kind: 'gap', phase: 3, text: 'two weeks later' },
+  { kind: 'you', phase: 3, text: 'both shipped. close out the context' },
   {
     kind: 'agent',
-    lead: 'Updated the implementation plan.',
+    phase: 3,
+    lead: 'Completed Referral rework.',
     lines: [
-      { text: '~ plan/referral-plan.md   2 steps added, 1 revised', tone: 'write' },
-      { text: 'Ready to start implementing?', tone: 'ask' },
+      { text: '✓ 2 tasks done · plan, decision and notes kept', tone: 'write' },
+      { text: 'It stays in your notebook, on the map.', tone: 'ask' },
     ],
   },
 ];
 
+/** How many loop steps the script plays through. */
+export const LOOP_PHASES = 4;
+
 const TYPE_MS = 24;
 const THINK_MS = 650;
 const AFTER_AGENT_MS = 900;
+const GAP_MS = 1100;
 
 /** `/bluekit` in the skill's blue; the rest of a prompt in plain white. */
 function PromptText({ text }: { text: string }) {
@@ -72,13 +87,25 @@ function Prompt({ children }: { children: ReactNode }) {
   );
 }
 
+/** A quiet divider for time passing between sessions. */
+function Gap({ text }: { text: string }) {
+  return (
+    <HStack gap="12px" my="4px" fontFamily="mono" fontSize="11.5px" style={{ color: 'rgba(255,255,255,0.32)' }}>
+      <Box flex="1" h="1px" style={{ background: 'rgba(255,255,255,0.08)' }} />
+      <Text>{text}</Text>
+      <Box flex="1" h="1px" style={{ background: 'rgba(255,255,255,0.08)' }} />
+    </HStack>
+  );
+}
+
 /**
- * A coding agent session with the BlueKit skill, played out: it starts blank,
- * types the connect prompt, and runs a short conversation (a question, a
- * decision logged, tasks tracked). Plays once when it scrolls into view;
- * Replay runs it again. With reduced motion the whole session shows at once.
+ * A coding agent session with the BlueKit skill, played out: it starts blank
+ * and runs one context's whole life (create, connect, build together, close
+ * out). Plays once when it scrolls into view; Replay runs it again. With
+ * reduced motion the whole session shows at once. `onPhase` reports the loop
+ * step being played: -1 before it starts, LOOP_PHASES once it's done.
  */
-export function AgentTerminal() {
+export function AgentTerminal({ onPhase }: { onPhase?: (phase: number) => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref as RefObject<HTMLElement>);
   const reduced = usePrefersReducedMotion();
@@ -108,6 +135,10 @@ export function AgentTerminal() {
       const t = setTimeout(() => { setStep((s) => s + 1); setTyped(0); }, 380);
       return () => clearTimeout(t);
     }
+    if (current.kind === 'gap') {
+      const t = setTimeout(() => setStep((s) => s + 1), GAP_MS);
+      return () => clearTimeout(t);
+    }
     setThinking(true);
     const t = setTimeout(() => {
       setThinking(false);
@@ -119,6 +150,11 @@ export function AgentTerminal() {
   const done = step >= SCRIPT.length;
   const current = SCRIPT[step];
   const replay = () => { setStep(0); setTyped(0); setThinking(false); };
+
+  const phase = done ? LOOP_PHASES : started ? current.phase : -1;
+  useEffect(() => {
+    onPhase?.(phase);
+  }, [phase, onPhase]);
 
   return (
     <Box
@@ -156,9 +192,11 @@ export function AgentTerminal() {
         )}
       </HStack>
 
-      <VStack align="stretch" gap="10px" px={{ base: '16px', md: '22px' }} py={{ base: '18px', md: '22px' }} minH={{ base: '500px', md: '540px' }}>
+      <VStack align="stretch" gap="10px" px={{ base: '16px', md: '22px' }} py={{ base: '18px', md: '22px' }} minH={{ base: '600px', md: '640px' }}>
         {SCRIPT.slice(0, step).map((s, i) =>
-          s.kind === 'you' ? (
+          s.kind === 'gap' ? (
+            <Gap key={i} text={s.text} />
+          ) : s.kind === 'you' ? (
             <Box key={i} mt={i === 0 ? 0 : '6px'}>
               <Prompt><PromptText text={s.text} /></Prompt>
             </Box>
@@ -205,6 +243,7 @@ export function AgentTerminal() {
             </Prompt>
           </Box>
         )}
+        {!done && current.kind === 'gap' && <Gap text={current.text} />}
         {!done && thinking && (
           <Text fontFamily="mono" fontSize={{ base: '12.5px', md: '13.5px' }} style={{ color: 'rgba(255,255,255,0.45)' }}>
             <Box as="span" mr="10px" className="caret" style={{ color: AGENT_ACCENT }}>⏺</Box>

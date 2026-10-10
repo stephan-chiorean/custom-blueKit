@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { LuFileText } from 'react-icons/lu';
 import { Box, Grid, HStack, Text, VStack } from '@chakra-ui/react';
 import { CONTEXTS, type DemoContext } from './data';
 import { DocView } from './DocView';
@@ -169,9 +170,9 @@ export function WorkspaceDemo() {
                   {view === 'docs' &&
                     context.docs.map((d, i) => (
                       <PanelRow key={d.name} index={i} onClick={() => openDoc(i)} active={d.name === doc.name}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-                          <path d="M7 3.5h7l4 4v13H7z" stroke={ink.accent} strokeWidth="1.7" strokeLinejoin="round" />
-                        </svg>
+                        <Box as="span" display="flex" flexShrink={0} style={{ color: ink.accentText }}>
+                          <LuFileText size={15} strokeWidth={1.75} aria-hidden="true" />
+                        </Box>
                         <Text fontSize="13.5px" fontWeight="500" truncate style={{ color: ink.strong }}>{d.name}</Text>
                         <Text ml="auto" fontSize="12px" flexShrink={0} style={{ color: ink.faint }}>{d.folder}/</Text>
                       </PanelRow>

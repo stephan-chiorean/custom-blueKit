@@ -3,13 +3,20 @@ import { Logo } from "./Logo";
 import { DOWNLOAD_URL } from "../release";
 import { WorkspaceDemo } from "./demo/WorkspaceDemo";
 import { DemoHint } from "./demo/kit";
-import { LuLayers, LuPackageCheck, LuRoute, LuWrench } from "react-icons/lu";
+import { LuLaptop, LuLayers, LuTerminal } from "react-icons/lu";
 
 const HIGHLIGHTS = [
-  { label: "Organize by context", Icon: LuLayers },
-  { label: "Trace your understanding", Icon: LuRoute },
-  { label: "Built-in tooling", Icon: LuWrench },
-  { label: "No plugin hell", Icon: LuPackageCheck },
+  { label: "Works with your coding agent", Icon: LuTerminal },
+  { label: "Docs, notes and tasks together", Icon: LuLayers },
+  { label: "Contexts available anywhere on your Mac", Icon: LuLaptop },
+];
+
+/** The loop, in one line: what you do with BlueKit, start to finish. */
+const LOOP = [
+  ["Create", "a context"],
+  ["Connect", "your agent"],
+  ["Build", "it together"],
+  ["Close", "it out"],
 ];
 
 function AppleIcon() {
@@ -78,20 +85,20 @@ export function Hero() {
 
               <Text
                 mt={{ base: "12px", md: "14px" }}
-                color="rgba(255,255,255,0.58)"
-                fontSize={{ base: "15px", md: "17px" }}
+                color="rgba(255,255,255,0.62)"
+                fontSize={{ base: "16px", md: "19px" }}
                 letterSpacing="0.01em"
                 textAlign="left"
               >
-                A markdown notebook with{" "}
-                <Text
-                  as="span"
-                  fontWeight="700"
-                  color="#4287f5"
-                >
-                  superpowers
-                </Text>
-                .
+                {LOOP.map((verb, i) => (
+                  <Text as="span" key={verb[0]}>
+                    {i > 0 && " "}
+                    <Text as="span" color="white" fontWeight="600">
+                      {verb[0]}
+                    </Text>{" "}
+                    {verb[1]}.
+                  </Text>
+                ))}
               </Text>
 
               <HStack
@@ -171,7 +178,7 @@ export function Hero() {
             p="0"
             mt={{ base: "10px", md: "18px" }}
             display="grid"
-            gridTemplateColumns={{ base: "repeat(2, minmax(0, 1fr))", md: "repeat(4, minmax(0, 1fr))" }}
+            gridTemplateColumns={{ base: "minmax(0, 1fr)", md: "repeat(3, minmax(0, 1fr))" }}
             borderTop="1px solid rgba(255, 255, 255, 0.08)"
             borderBottom="1px solid rgba(255, 255, 255, 0.08)"
           >
@@ -185,12 +192,9 @@ export function Hero() {
                 gap="10px"
                 py={{ base: "16px", md: "20px" }}
                 px={{ base: "4px", md: "16px" }}
-                borderLeft={{
-                  base: i % 2 === 1 ? "1px solid rgba(255, 255, 255, 0.08)" : "none",
-                  md: i > 0 ? "1px solid rgba(255, 255, 255, 0.08)" : "none",
-                }}
-                pl={{ base: i % 2 === 1 ? "16px" : "4px", md: "16px" }}
-                borderTop={{ base: i > 1 ? "1px solid rgba(255, 255, 255, 0.08)" : "none", md: "none" }}
+                borderLeft={{ base: "none", md: i > 0 ? "1px solid rgba(255, 255, 255, 0.08)" : "none" }}
+                pl={{ base: "4px", md: "16px" }}
+                borderTop={{ base: i > 0 ? "1px solid rgba(255, 255, 255, 0.08)" : "none", md: "none" }}
               >
                 <Box as="span" color="primary.300" flexShrink={0} display="flex" opacity={0.9}>
                   <Icon size={17} strokeWidth={1.75} aria-hidden="true" />
