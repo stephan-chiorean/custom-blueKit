@@ -4,10 +4,10 @@ import { LuFileText } from 'react-icons/lu';
 import { Box, Grid, HStack, Text, VStack } from '@chakra-ui/react';
 import { CONTEXTS, type DemoContext } from './data';
 import { DocView } from './DocView';
-import { DemoWindow, EASE_OUT_EXPO, MotionBox, NoteChip, Segmented, ink, useAutoplay } from './kit';
+import { DemoWindow, EASE_OUT_EXPO, GroupHeader, LinkPill, MotionBox, NoteChip, Segmented, ink, useAutoplay } from './kit';
 
-type View = 'docs' | 'notes' | 'tasks';
-const VIEWS: View[] = ['docs', 'notes', 'tasks'];
+type View = 'docs' | 'notes' | 'tasks' | 'links';
+const VIEWS: View[] = ['docs', 'notes', 'tasks', 'links'];
 const TASK_ORDER = ['open', 'in progress', 'done'] as const;
 
 const statusStyle: Record<(typeof TASK_ORDER)[number], { dot: string; label: string }> = {
@@ -46,8 +46,8 @@ function PanelRow({ index, children, onClick, active }: { index: number; childre
 
 /**
  * The hero: a working slice of BlueKit. Context tabs across the top, the open
- * doc rendered on the left, and the context's docs, notes and tasks on the
- * right. Plays through the contexts on its own until clicked; then docs open,
+ * doc rendered on the left, and the context's docs, notes, tasks and links on
+ * the right. Plays through the contexts on its own until clicked; then docs open,
  * tasks move through their statuses, and tabs switch.
  */
 export function WorkspaceDemo() {
@@ -88,6 +88,8 @@ export function WorkspaceDemo() {
   };
 
   const openTasks = context.tasks.filter((t) => t.status !== 'done').length;
+  // Linked contexts, counted once even when they share two groups with this one.
+  const linkedCount = new Set(context.groups.flatMap((g) => g.contexts.map((c) => c.name))).size;
 
   return (
     <DemoWindow
@@ -160,6 +162,7 @@ export function WorkspaceDemo() {
               { id: 'docs', label: <>Docs <Text as="span" style={{ color: ink.faint }}>{context.docs.length}</Text></> },
               { id: 'notes', label: <>Notes <Text as="span" style={{ color: ink.faint }}>{context.notes.length}</Text></> },
               { id: 'tasks', label: <>Tasks <Text as="span" style={{ color: ink.faint }}>{openTasks}</Text></> },
+              { id: 'links', label: <>Links <Text as="span" style={{ color: ink.faint }}>{linkedCount}</Text></> },
             ]}
           />
 
@@ -217,6 +220,26 @@ export function WorkspaceDemo() {
                         </Text>
                         <Text ml="auto" fontSize="11.5px" flexShrink={0} style={{ color: ink.faint }}>{statusStyle[t.status].label}</Text>
                       </PanelRow>
+                    ))}
+                  {view === 'links' &&
+                    context.groups.map((g, i) => (
+                      <MotionBox
+                        key={g.name}
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, ease: EASE_OUT_EXPO, delay: i * 0.06 }}
+                        px="11px"
+                        py="10px"
+                        borderRadius="9px"
+                        style={{ background: ink.surface }}
+                      >
+                        <GroupHeader name={g.name} about={g.about} />
+                        <HStack mt="9px" gap="6px" flexWrap="wrap">
+                          {g.contexts.map((c) => (
+                            <LinkPill key={c.name} name={c.name} status={c.status} />
+                          ))}
+                        </HStack>
+                      </MotionBox>
                     ))}
                 </VStack>
               </MotionBox>

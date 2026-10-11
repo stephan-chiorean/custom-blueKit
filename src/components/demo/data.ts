@@ -1,5 +1,5 @@
 import type { DemoDoc } from './DocView';
-import type { NoteType } from './kit';
+import type { ContextStatus, NoteType } from './kit';
 
 /** Sample notebook content shared by the demos: one believable team's work. */
 
@@ -9,7 +9,14 @@ export interface DemoContext {
   docs: DemoDoc[];
   notes: { type: NoteType; title: string }[];
   tasks: { title: string; status: 'open' | 'in progress' | 'done' }[];
+  /** The groups this context is in, with the other contexts in each (as in the graph demo). */
+  groups: { name: string; about: string; contexts: { name: string; status: ContextStatus }[] }[];
 }
+
+const GROWTH = { name: 'Growth', about: 'Everything that moves sign-ups.' };
+const PAYMENTS = { name: 'Payments', about: 'Money in, money out.' };
+const Q3_LAUNCH = { name: 'Q3 launch', about: 'What has to ship before launch.' };
+const RELIABILITY = { name: 'Reliability', about: 'Things that must not break twice.' };
 
 export const SPEC_DOC: DemoDoc = {
   name: 'new-flow-spec',
@@ -152,6 +159,25 @@ export const CONTEXTS: DemoContext[] = [
       { title: 'Attach it at sign-up', status: 'in progress' },
       { title: 'Record the new flow for review', status: 'open' },
     ],
+    groups: [
+      {
+        ...GROWTH,
+        contexts: [
+          { name: 'Referral program', status: 'active' },
+          { name: 'Activation emails', status: 'next' },
+          { name: 'Pricing page', status: 'next' },
+          { name: 'Old sign-up flow', status: 'completed' },
+        ],
+      },
+      {
+        ...Q3_LAUNCH,
+        contexts: [
+          { name: 'Q3 planning', status: 'active' },
+          { name: 'Checkout rebuild', status: 'active' },
+          { name: 'Billing bug', status: 'active' },
+        ],
+      },
+    ],
   },
   {
     name: 'Billing bug',
@@ -166,6 +192,26 @@ export const CONTEXTS: DemoContext[] = [
       { title: 'Reproduce the double charge', status: 'done' },
       { title: 'Add idempotency keys', status: 'in progress' },
     ],
+    groups: [
+      {
+        ...PAYMENTS,
+        contexts: [
+          { name: 'Checkout rebuild', status: 'active' },
+          { name: 'Referral program', status: 'active' },
+          { name: 'Pricing page', status: 'next' },
+          { name: 'Legacy invoices', status: 'archived' },
+        ],
+      },
+      {
+        ...Q3_LAUNCH,
+        contexts: [
+          { name: 'Q3 planning', status: 'active' },
+          { name: 'Onboarding redesign', status: 'active' },
+          { name: 'Checkout rebuild', status: 'active' },
+        ],
+      },
+      { ...RELIABILITY, contexts: [{ name: 'Webhook audit', status: 'completed' }] },
+    ],
   },
   {
     name: 'Q3 planning',
@@ -178,6 +224,16 @@ export const CONTEXTS: DemoContext[] = [
     tasks: [
       { title: 'Share the order with support', status: 'open' },
       { title: 'Book the October review', status: 'open' },
+    ],
+    groups: [
+      {
+        ...Q3_LAUNCH,
+        contexts: [
+          { name: 'Onboarding redesign', status: 'active' },
+          { name: 'Checkout rebuild', status: 'active' },
+          { name: 'Billing bug', status: 'active' },
+        ],
+      },
     ],
   },
 ];

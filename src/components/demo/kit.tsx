@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { Box, HStack, Text, type BoxProps } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import type { IconType } from 'react-icons';
+import { LuArchive, LuBoxes, LuCircleCheck, LuSkipForward, LuZap } from 'react-icons/lu';
 
 /**
  * Shared pieces for the landing page's live product demos: small, working
@@ -26,13 +28,14 @@ export const ink = {
   accentText: '#93c5fd',
 };
 
-export type NoteType = 'decision' | 'question' | 'idea' | 'flag';
+export type NoteType = 'decision' | 'question' | 'idea' | 'insight' | 'flag';
 
 /** Note type colours, the same ones the app uses in dark mode. */
 export const noteColors: Record<NoteType, { fg: string; bg: string }> = {
   decision: { fg: '#72B8E8', bg: 'rgba(74, 144, 217, 0.18)' },
   question: { fg: '#DBA365', bg: 'rgba(183, 119, 57, 0.18)' },
   idea: { fg: '#4ade80', bg: 'rgba(74, 222, 128, 0.13)' },
+  insight: { fg: '#c084fc', bg: 'rgba(168, 85, 247, 0.15)' },
   flag: { fg: '#f87171', bg: 'rgba(239, 68, 68, 0.15)' },
 };
 
@@ -50,6 +53,63 @@ export function NoteChip({ type }: { type: NoteType }) {
     >
       {type}
     </Text>
+  );
+}
+
+export type ContextStatus = 'active' | 'next' | 'completed' | 'archived';
+
+/** Context status as the app's Links tab shows it: an icon in its view's colour. */
+export const contextStatusStyle: Record<ContextStatus, { label: string; color: string; Icon: IconType }> = {
+  active: { label: 'Active', color: '#93c5fd', Icon: LuZap },
+  next: { label: 'Next', color: '#fcd34d', Icon: LuSkipForward },
+  completed: { label: 'Completed', color: '#4ade80', Icon: LuCircleCheck },
+  archived: { label: 'Archived', color: 'rgba(250, 237, 227, 0.5)', Icon: LuArchive },
+};
+
+/** Group violet, the same as the context graph. */
+export const GROUP_COLOR = '#c084fc';
+
+/** A linked context, as a pill: status icon, then the name. */
+export function LinkPill({ name, status }: { name: string; status: ContextStatus }) {
+  const { label, color, Icon } = contextStatusStyle[status];
+  return (
+    <HStack
+      as="span"
+      gap="6px"
+      flexShrink={0}
+      h="26px"
+      px="9px"
+      borderRadius="full"
+      fontSize="12.5px"
+      fontWeight="500"
+      whiteSpace="nowrap"
+      title={label}
+      style={{ color: ink.text, background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}
+    >
+      <Box as="span" display="flex" style={{ color }}>
+        <Icon size={12} strokeWidth={2.25} aria-label={label} />
+      </Box>
+      {name}
+    </HStack>
+  );
+}
+
+/** A group's header in the Links tab: violet mark, name, and what it's for. */
+export function GroupHeader({ name, about }: { name: string; about?: string }) {
+  return (
+    <HStack gap="8px" minW={0}>
+      <Box as="span" display="flex" flexShrink={0} style={{ color: GROUP_COLOR }}>
+        <LuBoxes size={14} strokeWidth={2} aria-hidden="true" />
+      </Box>
+      <Text as="span" flexShrink={0} fontSize="13px" fontWeight="600" style={{ color: ink.strong }}>
+        {name}
+      </Text>
+      {about && (
+        <Text as="span" truncate fontSize="12px" style={{ color: ink.faint }}>
+          {about}
+        </Text>
+      )}
+    </HStack>
   );
 }
 

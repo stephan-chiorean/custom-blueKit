@@ -3,13 +3,7 @@ import { Logo } from "./Logo";
 import { DOWNLOAD_URL } from "../release";
 import { WorkspaceDemo } from "./demo/WorkspaceDemo";
 import { DemoHint } from "./demo/kit";
-import { LuLaptop, LuLayers, LuTerminal } from "react-icons/lu";
-
-const HIGHLIGHTS = [
-  { label: "Works with your coding agent", Icon: LuTerminal },
-  { label: "Docs, notes and tasks together", Icon: LuLayers },
-  { label: "Contexts available anywhere on your Mac", Icon: LuLaptop },
-];
+import { ContextParts } from "./ContextParts";
 
 /** The loop, in one line: what you do with BlueKit, start to finish. */
 const LOOP = [
@@ -170,47 +164,7 @@ export function Hero() {
             <DemoHint>It's live: switch contexts, open docs, move tasks along.</DemoHint>
           </Box>
 
-          <Box
-            as="ul"
-            className="hero-reveal"
-            style={{ animationDelay: "0.32s", listStyle: "none" }}
-            m="0"
-            p="0"
-            mt={{ base: "10px", md: "18px" }}
-            display="grid"
-            gridTemplateColumns={{ base: "minmax(0, 1fr)", md: "repeat(3, minmax(0, 1fr))" }}
-            borderTop="1px solid rgba(255, 255, 255, 0.08)"
-            borderBottom="1px solid rgba(255, 255, 255, 0.08)"
-          >
-            {HIGHLIGHTS.map(({ label, Icon }, i) => (
-              <Box
-                as="li"
-                key={label}
-                display="flex"
-                alignItems="center"
-                justifyContent={{ base: "flex-start", md: "center" }}
-                gap="10px"
-                py={{ base: "16px", md: "20px" }}
-                px={{ base: "4px", md: "16px" }}
-                borderLeft={{ base: "none", md: i > 0 ? "1px solid rgba(255, 255, 255, 0.08)" : "none" }}
-                pl={{ base: "4px", md: "16px" }}
-                borderTop={{ base: i > 0 ? "1px solid rgba(255, 255, 255, 0.08)" : "none", md: "none" }}
-              >
-                <Box as="span" color="primary.300" flexShrink={0} display="flex" opacity={0.9}>
-                  <Icon size={17} strokeWidth={1.75} aria-hidden="true" />
-                </Box>
-                <Text
-                  color="rgba(255,255,255,0.78)"
-                  fontSize={{ base: "14px", md: "15px" }}
-                  fontWeight="500"
-                  letterSpacing="-0.005em"
-                  lineHeight="1.3"
-                >
-                  {label}
-                </Text>
-              </Box>
-            ))}
-          </Box>
+          <ContextParts />
         </VStack>
       </Container>
     </Box>
