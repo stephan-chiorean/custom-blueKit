@@ -2,7 +2,7 @@
   "redirects": [
     {
       "source": "/download",
-      "destination": "https://bluekit-download.bluekit.workers.dev/download",
+      "destination": "https://download.bluekit.md/download",
       "permanent": false
     }
   ]
