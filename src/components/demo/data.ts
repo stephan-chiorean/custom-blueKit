@@ -35,7 +35,6 @@ export const SPEC_DOC: DemoDoc = {
         ['3', 'Invite the team', 'Web'],
       ],
     },
-    { kind: 'callout', tone: 'question', text: 'Do trial users see the product tour twice if they skip step 3?' },
   ],
 };
 
