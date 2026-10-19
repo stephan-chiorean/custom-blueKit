@@ -20,6 +20,10 @@ export function Footer() {
         ·{' '}
         <a href="/privacy" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
           Privacy
+        </a>{' '}
+        ·{' '}
+        <a href="mailto:contact@bluekit.md" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: '3px' }}>
+          Contact
         </a>
       </Text>
     </VStack>
