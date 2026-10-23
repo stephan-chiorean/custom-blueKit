@@ -1,6 +1,6 @@
 import { Box, Container, Link, Text, VStack } from '@chakra-ui/react';
 import { useReveal } from '../hooks/useReveal';
-import { DOWNLOAD_URL, VERSION } from '../release';
+import { CHIPS, DOWNLOAD_URL, VERSION } from '../release';
 
 
 function AppleIcon() {
@@ -82,7 +82,7 @@ export function Download() {
             </Link>
 
             <Text mt="6px" color="rgba(255,255,255,0.45)" fontSize="13.5px" fontFamily="mono">
-              {VERSION ? `v${VERSION} · ` : ''}macOS · Apple Silicon
+              {VERSION ? `v${VERSION} · ` : ''}macOS · {CHIPS}
             </Text>
           </VStack>
         </Box>
